@@ -7,7 +7,7 @@ public class Stomp : MonoBehaviour
 
     private void Awake()
     {
-        // Default to direct parent so this works when attached to a child trigger object.
+        
         if (enemyRoot == null)
         {
             enemyRoot = transform.parent;

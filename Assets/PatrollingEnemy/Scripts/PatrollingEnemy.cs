@@ -200,7 +200,6 @@ public class PatrollingEnemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Optional fallback when attack trigger collider is on the same GameObject.
         HandleAttackRangeTrigger(other);
     }
 
@@ -211,7 +210,7 @@ public class PatrollingEnemy : MonoBehaviour
             return;
         }
 
-        // Demo behavior: right = normal, left = flipped.
+        
         spriteRenderer.flipX = moveDirection < 0;
     }
 
@@ -226,7 +225,7 @@ public class PatrollingEnemy : MonoBehaviour
 
         if (useHeroKnightAnimator)
         {
-            // Keeps the controller in grounded locomotion states for patrolling enemies.
+            
             animator.SetBool("Grounded", true);
             animator.SetBool("WallSlide", false);
             animator.SetFloat("AirSpeedY", 0f);
