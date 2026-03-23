@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class PlayerHealthManager : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class PlayerHealthManager : MonoBehaviour
     private int currentHealth;
     private bool isDead;
 
+    public event Action<int, int> HealthChanged;
+
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
     public bool IsDead => isDead;
@@ -30,6 +33,7 @@ public class PlayerHealthManager : MonoBehaviour
 
         maxHealth = Mathf.Max(1, maxHealth);
         currentHealth = maxHealth;
+        HealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     public void TakeDamage()
@@ -40,6 +44,7 @@ public class PlayerHealthManager : MonoBehaviour
         }
 
         currentHealth = Mathf.Max(0, currentHealth - 1);
+        HealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (animator != null && !string.IsNullOrEmpty(takeDamageTriggerName))
         {
