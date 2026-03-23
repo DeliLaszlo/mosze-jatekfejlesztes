@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 3548018720704304766}
   - component: {fileID: 7269769612007040353}
   - component: {fileID: 2539694568003701567}
+  - component: {fileID: 7374779201201818084}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -175,6 +176,31 @@ MonoBehaviour:
   forceDescendStateOnWalkOff: 1
   descendStateName: Player_Descend
   visualRoot: {fileID: 6925126724062994569}
+  useProceduralChargePose: 1
+  chargeSquashY: 0.1
+  chargeStretchX: 0.5
+  chargeDipY: 0.25
+  chargePoseBlendSpeed: 12
+  chargeTint: {r: 1, g: 0, b: 0.07159805, a: 1}
+  chargeTintStrength: 0.3
+--- !u!114 &7374779201201818084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3448956308101593219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77ea906e7b1dabe42a5dda7445cb3d77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealthManager
+  maxHealth: 10
+  takeDamageTriggerName: takeDamage
+  deathBoolName: isDead
+  disableControlsOnDeath: 1
+  disableCollidersOnDeath: 1
+  disablePhysicsOnDeath: 1
 --- !u!1 &6424116528757549274
 GameObject:
   m_ObjectHideFlags: 0

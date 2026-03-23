@@ -25,10 +25,22 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private bool forceDescendStateOnWalkOff = true;
 	[SerializeField] private string descendStateName = "Descend";
 	[SerializeField] private Transform visualRoot;
+	[SerializeField] private bool useProceduralChargePose = true;
+	[SerializeField, Range(0f, 0.5f)] private float chargeSquashY = 0.25f;
+	[SerializeField, Range(0f, 0.5f)] private float chargeStretchX = 0.18f;
+	[SerializeField, Range(0f, 0.5f)] private float chargeDipY = 0.08f;
+	[SerializeField] private float chargePoseBlendSpeed = 12f;
+	[SerializeField] private Color chargeTint = new Color(1f, 0.93f, 0.8f, 1f);
+	[SerializeField, Range(0f, 1f)] private float chargeTintStrength = 0.2f;
 
 	private Rigidbody2D rb;
 	private SpriteRenderer spriteRenderer;
 	private Animator animator;
+	private Vector3 baseVisualLocalScale;
+	private Vector3 baseVisualLocalPosition;
+	private Color baseSpriteColor = Color.white;
+	private float chargePoseWeight;
+	private int facingDirection = 1;
 	private float horizontalInput;
 	private bool isGrounded;
 	private bool wasGrounded;
@@ -59,6 +71,18 @@ public class PlayerController : MonoBehaviour
 		if (spriteRenderer == null)
 		{
 			spriteRenderer = GetComponent<SpriteRenderer>();
+		}
+
+		if (visualRoot != null)
+		{
+			baseVisualLocalScale = visualRoot.localScale;
+			baseVisualLocalPosition = visualRoot.localPosition;
+			facingDirection = baseVisualLocalScale.x < 0f ? -1 : 1;
+		}
+
+		if (spriteRenderer != null)
+		{
+			baseSpriteColor = spriteRenderer.color;
 		}
 	}
 
@@ -100,6 +124,8 @@ public class PlayerController : MonoBehaviour
 			jumpCharge = 0f;
 			TrySnapToAscendState();
 		}
+
+		UpdateChargePose();
 
 		bool isTryingToWalk = Mathf.Abs(horizontalInput) > 0.01f && isGrounded && !isCharging;
 
@@ -182,18 +208,75 @@ public class PlayerController : MonoBehaviour
 
 	private void ApplyFacing(int direction)
 	{
+		facingDirection = direction >= 0 ? 1 : -1;
+
 		if (visualRoot != null && visualRoot != transform)
 		{
 			Vector3 scale = visualRoot.localScale;
-			scale.x = Mathf.Abs(scale.x) * direction;
+			scale.x = Mathf.Abs(scale.x) * facingDirection;
 			visualRoot.localScale = scale;
 			return;
 		}
 
 		if (spriteRenderer != null)
 		{
-			spriteRenderer.flipX = direction < 0;
+			spriteRenderer.flipX = facingDirection < 0;
 		}
+	}
+
+	private void UpdateChargePose()
+	{
+		if (!useProceduralChargePose)
+		{
+			ResetChargePoseVisuals();
+			return;
+		}
+
+		float targetWeight = isGrounded && isCharging ? jumpCharge : 0f;
+		chargePoseWeight = Mathf.MoveTowards(chargePoseWeight, targetWeight, chargePoseBlendSpeed * Time.deltaTime);
+
+		if (visualRoot != null && visualRoot != transform)
+		{
+			float xMultiplier = 1f + chargeStretchX * chargePoseWeight;
+			float yMultiplier = 1f - chargeSquashY * chargePoseWeight;
+
+			Vector3 scale = baseVisualLocalScale;
+			scale.x = Mathf.Abs(baseVisualLocalScale.x) * xMultiplier * facingDirection;
+			scale.y = baseVisualLocalScale.y * yMultiplier;
+			visualRoot.localScale = scale;
+
+			Vector3 position = baseVisualLocalPosition;
+			position.y = baseVisualLocalPosition.y - chargeDipY * chargePoseWeight;
+			visualRoot.localPosition = position;
+		}
+
+		if (spriteRenderer != null)
+		{
+			spriteRenderer.color = Color.Lerp(baseSpriteColor, chargeTint, chargePoseWeight * chargeTintStrength);
+		}
+	}
+
+	private void ResetChargePoseVisuals()
+	{
+		chargePoseWeight = 0f;
+
+		if (visualRoot != null)
+		{
+			Vector3 scale = baseVisualLocalScale;
+			scale.x = Mathf.Abs(baseVisualLocalScale.x) * facingDirection;
+			visualRoot.localScale = scale;
+			visualRoot.localPosition = baseVisualLocalPosition;
+		}
+
+		if (spriteRenderer != null)
+		{
+			spriteRenderer.color = baseSpriteColor;
+		}
+	}
+
+	private void OnDisable()
+	{
+		ResetChargePoseVisuals();
 	}
 
 	private void TrySetBool(string parameterName, bool value)
