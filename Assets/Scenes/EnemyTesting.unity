@@ -3141,6 +3141,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2539694568003701567, guid: 4a58e86f3ec9a77419bf945d5150fe45, type: 3}
+      propertyPath: chargeTint.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2539694568003701567, guid: 4a58e86f3ec9a77419bf945d5150fe45, type: 3}
+      propertyPath: chargeTint.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2539694568003701567, guid: 4a58e86f3ec9a77419bf945d5150fe45, type: 3}
+      propertyPath: chargeTint.g
+      value: 0.39215687
+      objectReference: {fileID: 0}
+    - target: {fileID: 2539694568003701567, guid: 4a58e86f3ec9a77419bf945d5150fe45, type: 3}
+      propertyPath: chargeTint.r
+      value: 0.19607842
+      objectReference: {fileID: 0}
+    - target: {fileID: 2539694568003701567, guid: 4a58e86f3ec9a77419bf945d5150fe45, type: 3}
+      propertyPath: chargeTintStrength
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 3448956308101593219, guid: 4a58e86f3ec9a77419bf945d5150fe45, type: 3}
       propertyPath: m_Name
       value: Player

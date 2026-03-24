@@ -48,6 +48,7 @@ public class PlayerHealthManager : MonoBehaviour
 
         if (animator != null && !string.IsNullOrEmpty(takeDamageTriggerName))
         {
+            // #TODO: Add audio (player hurt SFX).
             animator.SetTrigger(takeDamageTriggerName);
         }
 
@@ -68,6 +69,7 @@ public class PlayerHealthManager : MonoBehaviour
 
         if (animator != null && !string.IsNullOrEmpty(deathBoolName))
         {
+            // #TODO: Add audio (player death SFX).
             animator.SetBool(deathBoolName, true);
         }
 

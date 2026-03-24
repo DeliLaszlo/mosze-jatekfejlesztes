@@ -147,6 +147,7 @@ public class PatrollingEnemy : MonoBehaviour
 
         if (animator != null && !string.IsNullOrEmpty(attackTriggerName))
         {
+            // #TODO: Add audio (enemy attack swing SFX).
             animator.SetTrigger(attackTriggerName);
         }
 
@@ -201,6 +202,7 @@ public class PatrollingEnemy : MonoBehaviour
 
         if (animator != null && !string.IsNullOrEmpty(deathTriggerName))
         {
+            // #TODO: Add audio (enemy death SFX).
             animator.SetTrigger(deathTriggerName);
         }
 

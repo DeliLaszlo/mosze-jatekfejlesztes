@@ -109,6 +109,7 @@ public class PlayerController : MonoBehaviour
 
 		if (isGrounded && Input.GetKey(jumpKey))
 		{
+			// #TODO: Add audio (jump charge buildup SFX).
 			isCharging = true;
 			jumpCharge += chargeSpeed * Time.deltaTime;
 			jumpCharge = Mathf.Clamp01(jumpCharge);
@@ -117,6 +118,7 @@ public class PlayerController : MonoBehaviour
 		if (isCharging && Input.GetKeyUp(jumpKey))
 		{
 			float jumpForce = Mathf.Lerp(minJumpForce, maxJumpForce, jumpCharge);
+			// #TODO: Add audio (jump launch SFX).
 			rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
 			isGrounded = false;
 			jumpGroundDetachTimer = jumpGroundDetachTime;
@@ -128,6 +130,7 @@ public class PlayerController : MonoBehaviour
 		UpdateChargePose();
 
 		bool isTryingToWalk = Mathf.Abs(horizontalInput) > 0.01f && isGrounded && !isCharging;
+		// #TODO: Add audio (footstep loop when walking while grounded).
 
 		if (animator != null)
 		{
