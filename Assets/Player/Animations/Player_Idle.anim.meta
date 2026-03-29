@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 48d7504bd33fe4c4f9bec83633c379b5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 159599
+  packageName: Medieval King Pack
+  packageVersion: 1.0
+  assetPath: Assets/Player/Animations/Idle.anim
+  uploadId: 343989
