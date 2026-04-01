@@ -1,4 +1,7 @@
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 public class PlayerController : MonoBehaviour
 {
@@ -189,6 +192,14 @@ public class PlayerController : MonoBehaviour
 
 	private float ReadHorizontalInput()
 	{
+		#if ENABLE_INPUT_SYSTEM
+		float inputSystemValue = ReadInputSystemHorizontal();
+		if (Mathf.Abs(inputSystemValue) > 0.01f)
+		{
+			return inputSystemValue;
+		}
+		#endif
+
 		float value = 0f;
 
 		if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
@@ -208,6 +219,31 @@ public class PlayerController : MonoBehaviour
 
 		return Input.GetAxisRaw("Horizontal");
 	}
+
+	#if ENABLE_INPUT_SYSTEM
+	private float ReadInputSystemHorizontal()
+	{
+		Keyboard keyboard = Keyboard.current;
+		if (keyboard == null)
+		{
+			return 0f;
+		}
+
+		float value = 0f;
+
+		if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
+		{
+			value -= 1f;
+		}
+
+		if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
+		{
+			value += 1f;
+		}
+
+		return Mathf.Clamp(value, -1f, 1f);
+	}
+	#endif
 
 	private void ApplyFacing(int direction)
 	{
