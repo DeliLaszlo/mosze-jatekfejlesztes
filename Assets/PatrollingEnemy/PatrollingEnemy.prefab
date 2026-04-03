@@ -152,6 +152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackRange
   owner: {fileID: 4295485885468776695}
+  playerTag: Player
+  checkInterval: 0.2
 --- !u!1 &882689228335310960
 GameObject:
   m_ObjectHideFlags: 0
@@ -281,7 +283,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 882689228335310960}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0

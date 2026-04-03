@@ -181,8 +181,8 @@ MonoBehaviour:
   chargeStretchX: 0.5
   chargeDipY: 0.25
   chargePoseBlendSpeed: 12
-  chargeTint: {r: 1, g: 0, b: 0.07159805, a: 1}
-  chargeTintStrength: 0.3
+  chargeTint: {r: 0.19607842, g: 0.39215687, b: 1, a: 1}
+  chargeTintStrength: 0.2
 --- !u!114 &7374779201201818084
 MonoBehaviour:
   m_ObjectHideFlags: 0
