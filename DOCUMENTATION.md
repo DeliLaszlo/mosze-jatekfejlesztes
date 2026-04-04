@@ -103,3 +103,49 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 **Fő viselkedés:**
 
 - `OnTriggerEnter2D()`: ha a játékos lép be, meghívja az ellenfél `DieFromStomp()` metódusát.
+
+## 3. Mage Enemy Scripts
+
+### 3.1 `MageEnemyController`
+
+**Fájl:** `Assets/MageEnemy/Scripts/MageEnemyController.cs`
+
+**Feladat:**
+
+- Állapotgép alapú mage ellenfél vezérlése (`Shielded`, `Attacking`, `Vulnerable`, `Teleporting`, `Dead`).
+- Időzített támadásciklus kezelése, majd sebezhető ablak megnyitása.
+- Slam támadásból területi sebzés alkalmazása a játékosra.
+- Teleportálás több pontra, vizuális effektekkel és szín-visszajelzéssel.
+- Stomp esemény kezelése: sebezhető állapotban mage sebzése, egyébként játékos büntetése.
+
+**Fő viselkedés:**
+
+- `Start()`: komponensek és referencia mezők inicializálása, HP beállítás, teleport pont kezdő index meghatározás, `Shielded` állapot indítása.
+- `Update()`: állapotonkénti időzítés és átmenet (`Shielded` -> támadás, `Vulnerable` -> teleport).
+- `StartAttack()`: támadás állapotba lépés és animáció trigger (`Attack`).
+- `OnStaffHitGround()`: animáció eseményből slam VFX lejátszás és sebzés kiosztása.
+- `OnAttackFinished()`: támadás után sebezhető állapotba váltás.
+- `HandleTeleportSequence()`: eltűnés/megjelenés VFX, sprite/collider ideiglenes tiltás, pozícióváltás, visszatérés `Shielded` állapotba.
+- `ApplySlamDamage()`: `OverlapBoxAll` alapú találatvizsgálat a slam hitbox területén, játékos sebzése.
+- `HandleStomp()`: sebezhető állapotban mage HP csökkentése vagy halál; máskülönben büntető teleport rutin indítása.
+- `PunishPlayerSequence()`: játékos sebzése, majd teleportálása egy másik pontra.
+- `Die()`: halál állapot, animáció trigger, collider és fizika kikapcsolás.
+
+**Fontos Inspector mezők:**
+
+- Combat: `maxHealth`, `timeBetweenAttacks`, `vulnerableDuration`, `slamHitbox`
+- Teleport: `teleportPoints`, `rootTransform`, `damageTeleportOutColor`
+- VFX: `shieldParticles`, `slamParticles`, `teleportOutParticles`, `teleportInParticles`
+- Render/animáció: `spriteRenderer`
+
+### 3.2 `MageStompReciever`
+
+**Fájl:** `Assets/MageEnemy/Scripts/MageStompReciever.cs`
+
+**Feladat:**
+
+- Stomp triggeren beérkező játékos találat továbbítása a mage vezérlő script felé.
+
+**Fő viselkedés:**
+
+- `OnTriggerEnter2D()`: ha a belépő collider `Player` tagű, meghívja a `mageController.HandleStomp(...)` metódust.
