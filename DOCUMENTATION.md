@@ -104,9 +104,55 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 
 - `OnTriggerEnter2D()`: ha a játékos lép be, meghívja az ellenfél `DieFromStomp()` metódusát.
 
-## 3. Scene Scripts
+## 3. Mage Enemy Scripts
 
-### 3.1 `CutsceneManager`
+### 3.1 `MageEnemyController`
+
+**Fájl:** `Assets/MageEnemy/Scripts/MageEnemyController.cs`
+
+**Feladat:**
+
+- Állapotgép alapú mage ellenfél vezérlése (`Shielded`, `Attacking`, `Vulnerable`, `Teleporting`, `Dead`).
+- Időzített támadásciklus kezelése, majd sebezhető ablak megnyitása.
+- Slam támadásból területi sebzés alkalmazása a játékosra.
+- Teleportálás több pontra, vizuális effektekkel és szín-visszajelzéssel.
+- Stomp esemény kezelése: sebezhető állapotban mage sebzése, egyébként játékos büntetése.
+
+**Fő viselkedés:**
+
+- `Start()`: komponensek és referencia mezők inicializálása, HP beállítás, teleport pont kezdő index meghatározás, `Shielded` állapot indítása.
+- `Update()`: állapotonkénti időzítés és átmenet (`Shielded` -> támadás, `Vulnerable` -> teleport).
+- `StartAttack()`: támadás állapotba lépés és animáció trigger (`Attack`).
+- `OnStaffHitGround()`: animáció eseményből slam VFX lejátszás és sebzés kiosztása.
+- `OnAttackFinished()`: támadás után sebezhető állapotba váltás.
+- `HandleTeleportSequence()`: eltűnés/megjelenés VFX, sprite/collider ideiglenes tiltás, pozícióváltás, visszatérés `Shielded` állapotba.
+- `ApplySlamDamage()`: `OverlapBoxAll` alapú találatvizsgálat a slam hitbox területén, játékos sebzése.
+- `HandleStomp()`: sebezhető állapotban mage HP csökkentése vagy halál; máskülönben büntető teleport rutin indítása.
+- `PunishPlayerSequence()`: játékos sebzése, majd teleportálása egy másik pontra.
+- `Die()`: halál állapot, animáció trigger, collider és fizika kikapcsolás.
+
+**Fontos Inspector mezők:**
+
+- Combat: `maxHealth`, `timeBetweenAttacks`, `vulnerableDuration`, `slamHitbox`
+- Teleport: `teleportPoints`, `rootTransform`, `damageTeleportOutColor`
+- VFX: `shieldParticles`, `slamParticles`, `teleportOutParticles`, `teleportInParticles`
+- Render/animáció: `spriteRenderer`
+
+### 3.2 `MageStompReciever`
+
+**Fájl:** `Assets/MageEnemy/Scripts/MageStompReciever.cs`
+
+**Feladat:**
+
+- Stomp triggeren beérkező játékos találat továbbítása a mage vezérlő script felé.
+
+**Fő viselkedés:**
+
+- `OnTriggerEnter2D()`: ha a belépő collider `Player` tagű, meghívja a `mageController.HandleStomp(...)` metódust.
+
+## 4. Scene Scripts
+
+### 4.1 `CutsceneManager`
 
 **Fájl:** `Assets/Scripts/CutsceneManager.cs`
 
@@ -123,7 +169,7 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - `AutoSwitch()`: adott idő után váltás.
 - `CrossfadePanel()`: panel fade-out/fade-in animáció.
 
-### 3.2 `GateHandler`
+### 4.2 `GateHandler`
 
 **Fájl:** `Assets/Scripts/GateHandler.cs`
 
@@ -137,9 +183,9 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - `Awake()`: egyedi gate key építése és mentett állapot alkalmazása.
 - `disableSelf()`: kapu letiltása és állapot mentése (`SceneTransitionLevelStateManager`).
 
-## 4. Score System Scripts
+## 5. Score System Scripts
 
-### 4.1 `ScoreManager`
+### 5.1 `ScoreManager`
 
 **Fájl:** `Assets/Scripts/Score/ScoreManager.cs`
 
@@ -157,7 +203,7 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - `AddMageKillScore()`: +1000 pont.
 - `AddGoldUrnScore()`: +50 pont.
 
-### 4.2 `PlayerScoreUI`
+### 5.2 `PlayerScoreUI`
 
 **Fájl:** `Assets/Scripts/Score/PlayerScoreUI.cs`
 
@@ -172,7 +218,7 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - `OnDisable()`: esemény leiratkozás.
 - `HandleScoreChanged()`: szöveg frissítése az aktuális pontszámra.
 
-### 4.3 `GoldUrnInteractable`
+### 5.3 `GoldUrnInteractable`
 
 **Fájl:** `Assets/Scripts/Score/GoldUrnInteractable.cs`
 
@@ -188,23 +234,23 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - `Update()`: interakció figyelése, törés indítása.
 - `BreakUrn()`: állapot mentése, +50 pont jóváírása, objektum letiltása.
 
-## 5. Scene struktúra
+## 6. Scene struktúra
 
-### 5.1 `Intro`
+### 6.1 `Intro`
 
 - Bevezető jelenet, ahol a `CutsceneManager` képsorokat vált és a játékost továbbítja a következő pályára.
 
-### 5.2 `EnemyLevel`
+### 6.2 `EnemyLevel`
 
 - Fő játékmenet jelenet, ahol a score rendszer (`ScoreManager`, `PlayerScoreUI`, `GoldUrnInteractable`) és a kapuállapot-kezelés (`GateHandler`) aktív.
 
-### 5.3 `Outro`
+### 6.3 `Outro`
 
 - Lezáró jelenet a pálya/célállapot elérése után.
 
-## 6. Scene Transition rendszer
+## 7. Scene Transition rendszer
 
-### 6.1 `SceneEdgeTransitionTrigger`
+### 7.1 `SceneEdgeTransitionTrigger`
 
 **Fájl:** `Assets/Scripts/SceneTransition/SceneEdgeTransitionTrigger.cs`
 
@@ -221,7 +267,7 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - `JumpKingSceneTransitionState.LockTriggers()`: duplaváltás elleni zárolás.
 - `SceneManager.LoadScene()`: cél scene betöltése.
 
-### 6.2 `PlayerSceneTransitionHandler`
+### 7.2 `PlayerSceneTransitionHandler`
 
 **Fájl:** `Assets/Scripts/SceneTransition/PlayerSceneTransitionHandler.cs`
 
@@ -237,7 +283,7 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - Játékos pozíció és (opcionálisan) `Rigidbody2D.linearVelocity` beállítása.
 - Utólagos trigger lock (`postSpawnTriggerLockDuration`) alkalmazása.
 
-### 6.3 `SceneTransitionSpawnPoint`
+### 7.3 `SceneTransitionSpawnPoint`
 
 **Fájl:** `Assets/Scripts/SceneTransition/SceneTransitionSpawnPoint.cs`
 
@@ -250,7 +296,7 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - `EntryPointId`: üres értéknél a `Default` azonosítót adja vissza.
 - `OnValidate()`: editorban biztosítja, hogy ne maradjon üres azonosító.
 
-### 6.4 `SceneTransitionState`
+### 7.4 `SceneTransitionState`
 
 **Fájl:** `Assets/Scripts/SceneTransition/SceneTransitionState.cs`
 
@@ -265,7 +311,7 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - `TryConsumeTransition()`: egyszer használatosan visszaadja a mentett átmenetet.
 - `LockTriggers()`: minimális várakozás beállítása következő triggerig.
 
-### 6.5 `SceneTransitionLevelStateManager`
+### 7.5 `SceneTransitionLevelStateManager`
 
 **Fájl:** `Assets/Scripts/SceneTransition/SceneTransitionState.cs`
 
@@ -281,7 +327,7 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - `MarkGateDisabled()` / `IsGateDisabled()`
 - `DisableForSavedState()`: mentett állapot szerinti objektum letiltás.
 
-### 6.6 `SceneTeleporter`
+### 7.6 `SceneTeleporter`
 
 **Fájl:** `Assets/Scripts/SceneTeleporter.cs`
 
