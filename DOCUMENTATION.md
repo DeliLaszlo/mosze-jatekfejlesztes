@@ -103,3 +103,192 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 **Fő viselkedés:**
 
 - `OnTriggerEnter2D()`: ha a játékos lép be, meghívja az ellenfél `DieFromStomp()` metódusát.
+
+## 3. Scene Scripts
+
+### 3.1 `CutsceneManager`
+
+**Fájl:** `Assets/Scripts/CutsceneManager.cs`
+
+**Feladat:**
+
+- Bevezető képsor (`Intro`) paneljeinek időzített kezelése.
+- Panelváltás fade animációval.
+- Továbbhaladás a következő jelenetre (`nextScene`) automatikusan vagy Space gombbal.
+
+**Fő viselkedés:**
+
+- `Start()`: panelek inicializálása, első panel aktiválása, időzítő indítása.
+- `Update()`: Space gomb figyelése és manuális továbbléptetés.
+- `AutoSwitch()`: adott idő után váltás.
+- `CrossfadePanel()`: panel fade-out/fade-in animáció.
+
+### 3.2 `GateHandler`
+
+**Fájl:** `Assets/Scripts/GateHandler.cs`
+
+**Feladat:**
+
+- Kapu állapotának (aktív/inaktív) megőrzése scene átmenetek között.
+- Mentett állapot visszaállítása betöltéskor.
+
+**Fő viselkedés:**
+
+- `Awake()`: egyedi gate key építése és mentett állapot alkalmazása.
+- `disableSelf()`: kapu letiltása és állapot mentése (`SceneTransitionLevelStateManager`).
+
+## 4. Score System Scripts
+
+### 4.1 `ScoreManager`
+
+**Fájl:** `Assets/Scripts/Score/ScoreManager.cs`
+
+**Feladat:**
+
+- Játékpontszám központi, statikus kezelése.
+- Pontok hozzáadása külön eseménytípusok alapján.
+- Score változás esemény (`ScoreChanged`) publikálása UI komponenseknek.
+
+**Fő viselkedés:**
+
+- `ResetScore()`: score nullázása.
+- `AddPoints()`: pont hozzáadása overflow védelemmel.
+- `AddPatrollingEnemyKillScore()`: +200 pont.
+- `AddMageKillScore()`: +1000 pont.
+- `AddGoldUrnScore()`: +50 pont.
+
+### 4.2 `PlayerScoreUI`
+
+**Fájl:** `Assets/Scripts/Score/PlayerScoreUI.cs`
+
+**Feladat:**
+
+- A jelenlegi score megjelenítése TMP UI elemen.
+- Feliratkozás a `ScoreManager.ScoreChanged` eseményre.
+
+**Fő viselkedés:**
+
+- `OnEnable()`: esemény feliratkozás és azonnali UI frissítés.
+- `OnDisable()`: esemény leiratkozás.
+- `HandleScoreChanged()`: szöveg frissítése az aktuális pontszámra.
+
+### 4.3 `GoldUrnInteractable`
+
+**Fájl:** `Assets/Scripts/Score/GoldUrnInteractable.cs`
+
+**Feladat:**
+
+- Interaktív urna kezelése trigger zónában.
+- E gombos interakció érzékelése (Input System + fallback).
+- Urna törésének és pontjutalomnak mentése scene átmenetek között.
+
+**Fő viselkedés:**
+
+- `OnTriggerEnter2D()` / `OnTriggerExit2D()`: játékos közelség követése, interakciós UI kapcsolása.
+- `Update()`: interakció figyelése, törés indítása.
+- `BreakUrn()`: állapot mentése, +50 pont jóváírása, objektum letiltása.
+
+## 5. Scene struktúra
+
+### 5.1 `Intro`
+
+- Bevezető jelenet, ahol a `CutsceneManager` képsorokat vált és a játékost továbbítja a következő pályára.
+
+### 5.2 `EnemyLevel`
+
+- Fő játékmenet jelenet, ahol a score rendszer (`ScoreManager`, `PlayerScoreUI`, `GoldUrnInteractable`) és a kapuállapot-kezelés (`GateHandler`) aktív.
+
+### 5.3 `Outro`
+
+- Lezáró jelenet a pálya/célállapot elérése után.
+
+## 6. Scene Transition rendszer
+
+### 6.1 `SceneEdgeTransitionTrigger`
+
+**Fájl:** `Assets/Scripts/SceneTransition/SceneEdgeTransitionTrigger.cs`
+
+**Feladat:**
+
+- Trigger belépéskor scene váltás indítása (`targetSceneName`).
+- Cél belépési pont (`targetEntryPointId`) és továbbvitt sebesség megadása.
+- Irány alapú feltételkezelés (csak felfelé vagy lefelé mozgásnál váltson).
+
+**Fő viselkedés:**
+
+- `OnTriggerEnter2D()`: játékos detektálása, feltételek ellenőrzése, átmenet indítása.
+- `JumpKingSceneTransitionState.BeginTransition()`: cél entry point + carry velocity mentése.
+- `JumpKingSceneTransitionState.LockTriggers()`: duplaváltás elleni zárolás.
+- `SceneManager.LoadScene()`: cél scene betöltése.
+
+### 6.2 `PlayerSceneTransitionHandler`
+
+**Fájl:** `Assets/Scripts/SceneTransition/PlayerSceneTransitionHandler.cs`
+
+**Feladat:**
+
+- Új scene betöltése után a játékos pozicionálása a megfelelő `SceneTransitionSpawnPoint`-ra.
+- Opcionális sebességátvitel (`carryVelocity`) alkalmazása az új scene-ben.
+
+**Fő viselkedés:**
+
+- `Start()`: függőben lévő átmenet fogyasztása (`TryConsumeTransition`).
+- Spawn pont keresése `entryPointId` alapján.
+- Játékos pozíció és (opcionálisan) `Rigidbody2D.linearVelocity` beállítása.
+- Utólagos trigger lock (`postSpawnTriggerLockDuration`) alkalmazása.
+
+### 6.3 `SceneTransitionSpawnPoint`
+
+**Fájl:** `Assets/Scripts/SceneTransition/SceneTransitionSpawnPoint.cs`
+
+**Feladat:**
+
+- Belépési pont azonosítók (`entryPointId`) definiálása az egyes jelenetekben.
+
+**Fő viselkedés:**
+
+- `EntryPointId`: üres értéknél a `Default` azonosítót adja vissza.
+- `OnValidate()`: editorban biztosítja, hogy ne maradjon üres azonosító.
+
+### 6.4 `SceneTransitionState`
+
+**Fájl:** `Assets/Scripts/SceneTransition/SceneTransitionState.cs`
+
+**Feladat:**
+
+- Statikus átmeneti állapot tárolása scene betöltések között.
+- Trigger lock időablak kezelése az ismételt aktiválások ellen.
+
+**Fő viselkedés:**
+
+- `BeginTransition()`: entry point + sebesség mentése.
+- `TryConsumeTransition()`: egyszer használatosan visszaadja a mentett átmenetet.
+- `LockTriggers()`: minimális várakozás beállítása következő triggerig.
+
+### 6.5 `SceneTransitionLevelStateManager`
+
+**Fájl:** `Assets/Scripts/SceneTransition/SceneTransitionState.cs`
+
+**Feladat:**
+
+- Scene-ek között perzisztens pályaállapot kezelése (urna, ellenfél, kapu).
+- Stabil kulcsképzés (`BuildStateKey`) scene útvonal + hierarchia alapján.
+
+**Fő viselkedés:**
+
+- `MarkUrnBroken()` / `IsUrnBroken()`
+- `MarkEnemyDefeated()` / `IsEnemyDefeated()`
+- `MarkGateDisabled()` / `IsGateDisabled()`
+- `DisableForSavedState()`: mentett állapot szerinti objektum letiltás.
+
+### 6.6 `SceneTeleporter`
+
+**Fájl:** `Assets/Scripts/SceneTeleporter.cs`
+
+**Feladat:**
+
+- Egyszerű, trigger alapú scene váltás biztosítása.
+
+**Fő viselkedés:**
+
+- `OnTriggerEnter2D()`: ha a Player belép, a `sceneToLoad` jelenetre vált.

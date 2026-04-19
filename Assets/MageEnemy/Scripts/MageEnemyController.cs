@@ -34,6 +34,19 @@ public class MageEnemyController : MonoBehaviour
     public Renderer spriteRenderer;
 
     private Animator anim;
+    private string enemyStateKey;
+
+    private void Awake()
+    {
+        enemyStateKey = SceneTransitionLevelStateManager.BuildStateKey(gameObject, "Enemy");
+        if (!SceneTransitionLevelStateManager.IsEnemyDefeated(enemyStateKey))
+        {
+            return;
+        }
+
+        GameObject rootObject = rootTransform != null ? rootTransform.gameObject : gameObject;
+        SceneTransitionLevelStateManager.DisableForSavedState(rootObject);
+    }
 
     void Start()
     {
@@ -327,6 +340,8 @@ public class MageEnemyController : MonoBehaviour
     {
         currentState = MageState.Dead;
         isInvulnerable = true;
+        SceneTransitionLevelStateManager.MarkEnemyDefeated(enemyStateKey);
+        ScoreManager.AddMageKillScore();
 
         StopAllCoroutines(); 
 
@@ -347,6 +362,13 @@ public class MageEnemyController : MonoBehaviour
         {
             rb.linearVelocity = Vector2.zero;
             rb.bodyType = RigidbodyType2D.Kinematic; 
+        }
+
+        GateHandler gate = FindFirstObjectByType<GateHandler>();
+        if (gate != null)
+        {
+            gate.disableSelf();
+            // TODO: Add audio (gate opening SFX).
         }
     }
 
