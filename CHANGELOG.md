@@ -2,6 +2,27 @@
 
 A projekt fontosabb változásai itt kerülnek rögzítésre.
 
+## [2026-04-19]
+
+### Added
+
+- Új jelenetek létrehozva: `Intro`, `EnemyLevel`, `Outro`.
+- Új `CutsceneManager` script: panelalapú intro képsorok kezelése, fade váltás, továbblépés a következő jelenetre.
+- Új `GateHandler` script: kapu letiltási állapot megőrzése scene váltások között.
+- Új score rendszer alap script: `ScoreManager` (globális pontszám és eseménykezelés).
+- Új UI script: `PlayerScoreUI` (pontszám kijelzés TMP szövegmezőn).
+- Új interakciós script: `GoldUrnInteractable` (E gombos urna törés, pont jóváírás, állapotmentés).
+- Új scene váltás kezelő scriptek: `PlayerSceneTransitionHandler`, `SceneEdgeTransitionTrigger`, `SceneTransitionSpawnPoint`, `SceneTransitionState`
+
+## [2026-04-04]
+
+### Added
+
+- Új `MageEnemy` viselkedés: állapotgép alapú ellenfél (`Shielded`, `Attacking`, `Vulnerable`, `Teleporting`, `Dead`) időzített támadással, sebezhető ablakkal, teleportálással és halál állapottal.
+- Új slam támadás logika: animáció eseményhez kötött területi sebzés (`OverlapBoxAll`) a `PlayerHealthManager` felé.
+- Új stomp logika: sebezhető állapotban HP csökkentés/halál, nem sebezhető állapotban játékos büntetése sebzéssel és teleporttal.
+- Új stomp trigger továbbító script: `MageStompReciever`, amely a játékos trigger belépését a `MageEnemyController` felé továbbítja.
+
 ## [2026-03-29]
 
 ### Added
