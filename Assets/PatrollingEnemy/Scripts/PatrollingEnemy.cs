@@ -147,12 +147,35 @@ public class PatrollingEnemy : MonoBehaviour
 
         if (animator != null && !string.IsNullOrEmpty(attackTriggerName))
         {
+            // #TODO: Add audio (enemy attack swing SFX).
             animator.SetTrigger(attackTriggerName);
         }
 
-        if (destroyPlayerOnAttack && target != null)
+        if (target != null)
         {
-            Destroy(target);
+            Component healthManager = target.GetComponent("PlayerHealthManager");
+            if (healthManager == null)
+            {
+                MonoBehaviour[] parentBehaviours = target.GetComponentsInParent<MonoBehaviour>(true);
+                for (int i = 0; i < parentBehaviours.Length; i++)
+                {
+                    MonoBehaviour behaviour = parentBehaviours[i];
+                    if (behaviour != null && behaviour.GetType().Name == "PlayerHealthManager")
+                    {
+                        healthManager = behaviour;
+                        break;
+                    }
+                }
+            }
+
+            if (healthManager != null)
+            {
+                healthManager.SendMessage("TakeDamage", SendMessageOptions.DontRequireReceiver);
+            }
+            else if (destroyPlayerOnAttack)
+            {
+                Destroy(target);
+            }
         }
 
         yield return new WaitForSeconds(attackDuration);
@@ -179,6 +202,7 @@ public class PatrollingEnemy : MonoBehaviour
 
         if (animator != null && !string.IsNullOrEmpty(deathTriggerName))
         {
+            // #TODO: Add audio (enemy death SFX).
             animator.SetTrigger(deathTriggerName);
         }
 
