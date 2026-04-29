@@ -338,3 +338,21 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 **Fő viselkedés:**
 
 - `OnTriggerEnter2D()`: ha a Player belép, a `sceneToLoad` jelenetre vált.
+
+## 8. Automata Tesztelés (Unit Tests)
+
+A projekt a Unity Test Framework (NUnit) segítségével átfogó automata tesztelést alkalmaz az üzleti logika és a játékelemek validálására. A tesztek az `Assets/Tests` mappában és a `Tests` Assembly definícióban találhatók.
+
+### 8.1 `TestUtilities`
+- Segédosztály a tesztekhez, amely C# Reflection használatával teszi lehetővé a privát mezők (`GetPrivateField`, `SetPrivateField`) és privát metódusok (`InvokePrivateMethod`) hívását, valamint a statikus állapotok resetelését a tesztek között (pl. `ResetScore`, `ResetJumpKingSceneTransitionState`).
+
+### 8.2 Tesztelt területek
+
+- **`PlayerTests`**: A játékos mozgását, ugrás-töltés (charge) mechanikáját, animációs paramétereit, állapotváltásait és az életpont rendszer (`PlayerHealthManager`) sebződését és halálát fedi le.
+- **`PatrollingEnemyTests`**: A járőröző ellenfél kezdőpont-ellenőrzését, mozgásirányát, trigger-alapú játékos-észlelését, a támadás indítását és a stomp-okozta megsemmisülést teszteli.
+- **`MageEnemyTests`**: A fázisokra osztott mágus állapotgépét ellenőrzi, fókuszálva a sérthetetlenségre, támadási időzítésekre, területre ható slam sebzésre és a teleportációra.
+- **`SceneTransitionTests`**: A jelenetek közötti adatátvitel (`JumpKingSceneTransitionState`), spawn pont keresés, kapuállapotok és pályák közti perzisztencia ellenőrzése.
+- **`ScoreManagerTests` / `GoldUrnInteractableTests`**: A pontrendszer overflow-védelmét, statikus frissítéseit, és a felvehető/interaktív tárgyak pontszám-növelő képességét validálják.
+- **`MiscTests`**: Kisebb független rendszerek (pl. `GateHandler` állapotmentése, Cutscene kezelés, vagy fallback logika) tesztelése.
+
+A tesztek PlayMode / EditMode futtatással gondoskodnak a stabilitásról, megakadályozva a kód refaktorálásából adódó regressziókat.

@@ -1,0 +1,17 @@
+{
+    "name": "PatrollingEnemyAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0f36118f8eac341488ce915fe06b4576",
+        "GUID:79113ade4c47a0c40a764a406ab27d5d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

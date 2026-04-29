@@ -180,7 +180,15 @@ public class PatrollingEnemy : MonoBehaviour
 
             if (healthManager != null)
             {
-                healthManager.SendMessage("TakeDamage", SendMessageOptions.DontRequireReceiver);
+                System.Reflection.MethodInfo takeDamageMethod = healthManager.GetType().GetMethod("TakeDamage", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                if (takeDamageMethod != null)
+                {
+                    takeDamageMethod.Invoke(healthManager, null);
+                }
+                else
+                {
+                    healthManager.SendMessage("TakeDamage", SendMessageOptions.DontRequireReceiver);
+                }
             }
             else if (destroyPlayerOnAttack)
             {

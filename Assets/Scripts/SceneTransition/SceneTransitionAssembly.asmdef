@@ -1,0 +1,16 @@
+{
+    "name": "SceneTransitionAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e620989b94140f74e908d0bfc3fca69e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
