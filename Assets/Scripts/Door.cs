@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Door : MonoBehaviour
@@ -7,11 +8,12 @@ public class Door : MonoBehaviour
     private void Awake()
     {
         _animator = GetComponent<Animator>();
+
     }
 
     [ContextMenu(itemName:"Open")]
     public void Open()
     {
-        _animator.SetTrigger("Open");
+        _animator.SetTrigger(name:"Open");
     }
 }
