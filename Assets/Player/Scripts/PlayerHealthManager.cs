@@ -20,9 +20,6 @@ public class PlayerHealthManager : MonoBehaviour
     private int currentHealth;
     private bool isDead;
 
-    private static bool hasPersistedHealth;
-    private static int persistedHealth;
-
     public event Action<int, int> HealthChanged;
 
     public int CurrentHealth => currentHealth;
@@ -35,17 +32,7 @@ public class PlayerHealthManager : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         maxHealth = Mathf.Max(1, maxHealth);
-
-        if (hasPersistedHealth)
-        {
-            currentHealth = Mathf.Clamp(persistedHealth, 0, maxHealth);
-        }
-        else
-        {
-            currentHealth = maxHealth;
-        }
-
-        PersistHealth();
+        currentHealth = maxHealth;
         HealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
@@ -57,7 +44,6 @@ public class PlayerHealthManager : MonoBehaviour
         }
 
         currentHealth = Mathf.Max(0, currentHealth - 1);
-        PersistHealth();
         HealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (animator != null && !string.IsNullOrEmpty(takeDamageTriggerName))
@@ -70,12 +56,6 @@ public class PlayerHealthManager : MonoBehaviour
         {
             HandleDeath();
         }
-    }
-
-    private void PersistHealth()
-    {
-        hasPersistedHealth = true;
-        persistedHealth = currentHealth;
     }
 
     private void HandleDeath()
