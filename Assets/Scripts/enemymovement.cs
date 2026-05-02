@@ -7,18 +7,18 @@ public class BossSequence : MonoBehaviour
     private State currentState = State.EightShape;
     private State nextStateAfterWait;
 
-    public float waittime = 5f;
-    public int repeatNum = 1; 
+    public float waittime = 4f;
+    public int repeatNum = 4; 
 
     [Header("8-as alak beállítások")]
-    public float eightWidth = 10f;
-    public float eightHeight = 5f;
-    public float speed = 2f;
+    public float eightWidth = 12f;
+    public float eightHeight = 7f;
+    public float speed = 1.5f;
     private int completedEightCircles = 0;
 
     [Header("Háromszög beállítások")]
-    public float triWidth = 10f;
-    public float triHeight = 4f;
+    public float triWidth = 16f;
+    public float triHeight = 8f;
     private int completedTriangles = 0;
 
     private Vector3 startPosition;
@@ -52,17 +52,14 @@ public class BossSequence : MonoBehaviour
     void MoveInEight()
     {
         timer += Time.deltaTime * speed;
-        
-        // A teljes kör 2 * PI ideig tart (kb. 6.28)
         float x = Mathf.Sin(timer) * eightWidth;
         float y = Mathf.Sin(timer * 2f) * eightHeight;
         Vector3 nextPos = startPosition + new Vector3(x, y, 0);
 
-        // Ha elértük a 2*PI-t, egy teljes kört tettünk meg
         if (timer >= Mathf.PI * 2f)
         {
             completedEightCircles++;
-            timer = 0; // Itt a kulcs: nullázzuk, hogy a következő kör tiszta legyen
+            timer = 0;
 
             if (completedEightCircles >= repeatNum)
             {
@@ -79,7 +76,6 @@ public class BossSequence : MonoBehaviour
     void MoveInTriangle()
     {
         timer += Time.deltaTime * speed * 0.5f;
-        // A háromszög 3 egységnyi idő alatt ér körbe a Lerp logika miatt
         float t = timer; 
 
         if (timer >= 3f)
@@ -136,7 +132,6 @@ public class BossSequence : MonoBehaviour
 
     public bool IsMoving()
     {
-        // Akkor lojön, ha a 8-as alakban VAGY a háromszögben van
         return currentState == State.EightShape || currentState == State.Triangle;
     }
 }
