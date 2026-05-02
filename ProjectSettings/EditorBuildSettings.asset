@@ -20,5 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Outro.unity
     guid: 86656ace463054d4d88bd62d63aa1a4f
+  - enabled: 1
+    path: Assets/Scenes/PuzzleLvL.unity
+    guid: 5cd29cbca35164842b56513bc511c90e
   m_configObjects: {}
-  m_UseUCBPForAssetBundles: 0
