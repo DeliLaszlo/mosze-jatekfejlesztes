@@ -1,0 +1,19 @@
+{
+    "name": "MageEnemyAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0f36118f8eac341488ce915fe06b4576",
+        "GUID:79113ade4c47a0c40a764a406ab27d5d",
+        "GUID:e620989b94140f74e908d0bfc3fca69e",
+        "GUID:797f561f0c68384449392cd1e3af4137"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

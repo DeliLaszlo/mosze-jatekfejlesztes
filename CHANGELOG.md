@@ -2,6 +2,17 @@
 
 A projekt fontosabb változásai itt kerülnek rögzítésre.
 
+## [2026-04-29]
+
+### Added
+
+- **Teljes automata tesztelési keretrendszer (Unit Tests)** hozzáadva a projekthez (`Assets/Tests` mappa).
+- `TestUtilities`: Privát mezők és metódusok elérését segítő utility osztály (Reflection alapokon).
+- Játékos logika tesztek: `PlayerTests` (mozgás, töltés, input, ugrás, sebződés).
+- Ellenfél tesztek: `PatrollingEnemyTests` és `MageEnemyTests` (állapotgép, sebződés, támadás, stomp).
+- Rendszer tesztek: `SceneTransitionTests` (átmenetek, spawn pontok), `ScoreManagerTests`, `GoldUrnInteractableTests`, `PlayerScoreUITests`.
+- Egyéb tesztek: `MiscTests` (kisebb util osztályok, kapukezelés).
+
 ## [2026-04-19]
 
 ### Added
