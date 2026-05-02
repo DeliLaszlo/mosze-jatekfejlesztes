@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class BossSpawner : MonoBehaviour
 {
@@ -106,7 +107,7 @@ void ShootFan()
             //Destroy(gameObject);
         }
     }
-        public void TakeDamage(int damage)
+    public void TakeDamage(int damage)
     {
         hp -= damage;
         Debug.Log("Boss HP: " + hp);
@@ -117,9 +118,15 @@ void ShootFan()
         }
         else
         {
-            Debug.Log("Boss legyőzve!");
-            Destroy(gameObject);
+            Die();
         }
+    }
+
+    private void Die()
+    {
+        Destroy(gameObject); 
+        Debug.Log("Boss legyőzve!");
+        SceneManager.LoadScene("Outro"); 
     }
 
     IEnumerator HitRoutine()
