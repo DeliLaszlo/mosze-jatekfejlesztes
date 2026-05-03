@@ -34,16 +34,6 @@ public class PatrollingEnemy : MonoBehaviour
     private bool isAttacking;
     private bool isDead;
     private Coroutine attackRoutine;
-    private string enemyStateKey;
-
-    private void Awake()
-    {
-        enemyStateKey = SceneTransitionLevelStateManager.BuildStateKey(gameObject, "Enemy");
-        if (SceneTransitionLevelStateManager.IsEnemyDefeated(enemyStateKey))
-        {
-            SceneTransitionLevelStateManager.DisableForSavedState(gameObject);
-        }
-    }
 
     private void Start()
     {
@@ -211,8 +201,6 @@ public class PatrollingEnemy : MonoBehaviour
 
         isDead = true;
         isAttacking = false;
-        SceneTransitionLevelStateManager.MarkEnemyDefeated(enemyStateKey);
-        ScoreManager.AddPatrollingEnemyKillScore();
 
         if (attackRoutine != null)
         {

@@ -1,56 +1,137 @@
+
 using UnityEngine;
 
-public class BossMovement : MonoBehaviour
+public class BossSequence : MonoBehaviour
 {
-    public float speed = 5f;
-    public Vector2 range = new Vector2(10f, 10f); // Kisebb értékre vettem a láthatóság kedvéért
-    private Vector2 targetPosition;
+    private enum State { EightShape, Waiting, Triangle }
+    private State currentState = State.EightShape;
+    private State nextStateAfterWait;
 
-    private Animator animator;
+    public float waittime = 4f;
+    public int repeatNum = 4; 
+
+    [Header("8-as alak beállítások")]
+    public float eightWidth = 12f;
+    public float eightHeight = 7f;
+    public float speed = 1.5f;
+    private int completedEightCircles = 0;
+
+    [Header("Háromszög beállítások")]
+    public float triWidth = 16f;
+    public float triHeight = 8f;
+    private int completedTriangles = 0;
+
+    private Vector3 startPosition;
+    private float timer = 0f;
     private SpriteRenderer spriteRenderer;
+    private Animator animator;
 
     void Start()
     {
-        animator = GetComponent<Animator>();
+        startPosition = transform.position;
         spriteRenderer = GetComponent<SpriteRenderer>();
-
-        SetNewTarget();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        // Mozgás a célpont felé
-        transform.position = Vector2.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-
-        // --- IRÁNYBA FORDULÁS ---
-        // Ha a célpont tőlünk jobbra van, ne legyen flip (vagy fordítva, sprite-tól függően)
-        if (targetPosition.x > transform.position.x)
+        switch (currentState)
         {
-            spriteRenderer.flipX = false; // Jobbra néz
-        }
-        else if (targetPosition.x < transform.position.x)
-        {
-            spriteRenderer.flipX = true; // Balra néz
-        }
-        // -------------------------
-
-        // Animáció bekapcsolása (mivel folyamatosan megy)
-        if (animator != null)
-        {
-            animator.SetBool("isWalking", true);
-        }
-
-        // Ha elértük a célpontot, újabbat választunk
-        if (Vector2.Distance(transform.position, targetPosition) < 0.1f)
-        {
-            SetNewTarget();
+            case State.EightShape:
+                MoveInEight();
+                break;
+            case State.Waiting:
+                HandleWait();
+                break;
+            case State.Triangle:
+                MoveInTriangle();
+                break;
         }
     }
 
-    void SetNewTarget()
+    void MoveInEight()
     {
-        float randomX = Random.Range(-range.x / 2, range.x / 2);
-        float randomY = Random.Range(-range.y / 2, range.y / 2);
-        targetPosition = new Vector2(randomX, randomY);
+        timer += Time.deltaTime * speed;
+        float x = Mathf.Sin(timer) * eightWidth;
+        float y = Mathf.Sin(timer * 2f) * eightHeight;
+        Vector3 nextPos = startPosition + new Vector3(x, y, 0);
+
+        if (timer >= Mathf.PI * 2f)
+        {
+            completedEightCircles++;
+            timer = 0;
+
+            if (completedEightCircles >= repeatNum)
+            {
+                completedEightCircles = 0;
+                GoToWait(State.Triangle);
+                return;
+            }
+        }
+
+        FlipSprite(nextPos.x);
+        transform.position = nextPos;
+    }
+
+    void MoveInTriangle()
+    {
+        timer += Time.deltaTime * speed * 0.5f;
+        float t = timer; 
+
+        if (timer >= 3f)
+        {
+            completedTriangles++;
+            timer = 0;
+
+            if (completedTriangles >= repeatNum)
+            {
+                completedTriangles = 0;
+                GoToWait(State.EightShape);
+                return;
+            }
+        }
+
+        Vector3 p0 = startPosition;
+        Vector3 p1 = startPosition + new Vector3(triWidth / 2, -triHeight, 0);
+        Vector3 p2 = startPosition + new Vector3(-triWidth / 2, -triHeight, 0);
+
+        Vector3 nextPos;
+        if (t < 1f) nextPos = Vector3.Lerp(p0, p1, t);
+        else if (t < 2f) nextPos = Vector3.Lerp(p1, p2, t - 1f);
+        else nextPos = Vector3.Lerp(p2, p0, t - 2f);
+
+        FlipSprite(nextPos.x);
+        transform.position = nextPos;
+    }
+
+    void GoToWait(State nextTask)
+    {
+        transform.position = startPosition;
+        timer = 0;
+        nextStateAfterWait = nextTask;
+        currentState = State.Waiting;
+        if (animator != null) animator.enabled = false;
+    }
+
+    void HandleWait()
+    {
+        timer += Time.deltaTime;
+        if (timer >= waittime)
+        {
+            timer = 0;
+            currentState = nextStateAfterWait;
+            if (animator != null) animator.enabled = true;
+        }
+    }
+
+    void FlipSprite(float currentX)
+    {
+        if (currentX > transform.position.x) spriteRenderer.flipX = false;
+        else if (currentX < transform.position.x) spriteRenderer.flipX = true;
+    }
+
+    public bool IsMoving()
+    {
+        return currentState == State.EightShape || currentState == State.Triangle;
     }
 }
