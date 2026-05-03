@@ -364,7 +364,7 @@ public class MageEnemyController : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Kinematic; 
         }
 
-        GateHandler gate = FindFirstObjectByType<GateHandler>();
+        GateHandler gate = FindAnyObjectByType<GateHandler>();
         if (gate != null)
         {
             gate.disableSelf();
