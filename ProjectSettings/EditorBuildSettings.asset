@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EnemyLevel.unity
     guid: 8563632951271bf43b977a842ca8b38c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TempLevel.unity
     guid: 9a9941adf673e3e4c8b46d5d4bf436a7
   - enabled: 1
@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PuzzleLvL.unity
     guid: 5cd29cbca35164842b56513bc511c90e
+  - enabled: 1
+    path: Assets/Scenes/BossScene.unity
+    guid: 887a97e6369c4604fa3e4f1550e8a6eb
   m_configObjects: {}

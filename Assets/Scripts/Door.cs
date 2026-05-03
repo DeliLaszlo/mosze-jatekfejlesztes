@@ -14,6 +14,14 @@ public class Door : MonoBehaviour
     [ContextMenu(itemName:"Open")]
     public void Open()
     {
+        BoxCollider2D[] colliders = GetComponentsInChildren<BoxCollider2D>(true);
+        foreach (BoxCollider2D col in colliders)
+        {
+            if (!col.enabled)
+            {
+                col.enabled = true;
+            }
+        }
         _animator.SetTrigger(name:"Open");
     }
 }

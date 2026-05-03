@@ -13,7 +13,7 @@ public class PlayerSceneTransitionHandler : MonoBehaviour
             return;
         }
 
-        SceneTransitionSpawnPoint[] spawnPoints = Object.FindObjectsByType<SceneTransitionSpawnPoint>(FindObjectsSortMode.None);
+        SceneTransitionSpawnPoint[] spawnPoints = Object.FindObjectsByType<SceneTransitionSpawnPoint>(FindObjectsInactive.Exclude);
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             if (spawnPoints[i].EntryPointId != entryPointId)

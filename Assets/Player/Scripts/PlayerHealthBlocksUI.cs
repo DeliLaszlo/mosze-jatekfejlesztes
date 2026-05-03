@@ -33,7 +33,7 @@ public class PlayerHealthBlocksUI : MonoBehaviour
 
         if (playerHealth == null)
         {
-            playerHealth = FindFirstObjectByType<PlayerHealthManager>();
+            playerHealth = FindAnyObjectByType<PlayerHealthManager>();
         }
 
         EnsureHorizontalLayout();

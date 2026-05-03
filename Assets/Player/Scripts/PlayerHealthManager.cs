@@ -1,8 +1,12 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class PlayerHealthManager : MonoBehaviour
 {
+    private static bool hasPersistedHealth;
+    private static int persistedHealth;
+
     [Header("Health")]
     [SerializeField] private int maxHealth = 3;
 
@@ -15,6 +19,10 @@ public class PlayerHealthManager : MonoBehaviour
     [SerializeField] private bool disableCollidersOnDeath = true;
     [SerializeField] private bool disablePhysicsOnDeath = true;
 
+    [Header("UI")]
+    [SerializeField] private GameObject gameOverUI;
+    [SerializeField] private GameObject resetPromptUI;
+
     private Animator animator;
     private Rigidbody2D rb;
     private int currentHealth;
@@ -26,14 +34,36 @@ public class PlayerHealthManager : MonoBehaviour
     public int MaxHealth => maxHealth;
     public bool IsDead => isDead;
 
+    public static void OverrideNextSpawnHealth(int health)
+    {
+        hasPersistedHealth = true;
+        persistedHealth = Mathf.Max(0, health);
+    }
+
     private void Awake()
     {
         animator = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
 
         maxHealth = Mathf.Max(1, maxHealth);
-        currentHealth = maxHealth;
+
+        if (hasPersistedHealth)
+        {
+            currentHealth = Mathf.Clamp(persistedHealth, 0, maxHealth);
+        }
+        else
+        {
+            currentHealth = maxHealth;
+        }
+
+        PersistHealth();
         HealthChanged?.Invoke(currentHealth, maxHealth);
+
+        if (currentHealth <= 0)
+        {
+            HandleDeath();
+            TriggerGameOver();
+        }
     }
 
     public void TakeDamage()
@@ -44,6 +74,7 @@ public class PlayerHealthManager : MonoBehaviour
         }
 
         currentHealth = Mathf.Max(0, currentHealth - 1);
+        PersistHealth();
         HealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (animator != null && !string.IsNullOrEmpty(takeDamageTriggerName))
@@ -55,6 +86,24 @@ public class PlayerHealthManager : MonoBehaviour
         if (currentHealth <= 0)
         {
             HandleDeath();
+            TriggerGameOver();
+        }
+    }
+
+    public void SimulateDeath()
+    {
+        if (isDead)
+        {
+            return;
+        }
+
+        HandleDeath();
+
+        StartCoroutine(ShowResetPromptDelayed());
+
+        if (currentHealth == 1)
+        {
+            TriggerGameOver();
         }
     }
 
@@ -96,6 +145,36 @@ public class PlayerHealthManager : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             rb.angularVelocity = 0f;
             rb.simulated = false;
+        }
+    }
+
+    private void PersistHealth()
+    {
+        hasPersistedHealth = true;
+        persistedHealth = currentHealth;
+    }
+
+    private void TriggerGameOver()
+    {
+        ResetManager resetManager = FindAnyObjectByType<ResetManager>();
+        if (resetManager != null)
+        {
+            resetManager.enabled = false;
+        }
+
+        if (gameOverUI != null)
+        {
+            gameOverUI.SetActive(true);
+        }
+    }
+
+    private IEnumerator ShowResetPromptDelayed()
+    {
+        yield return new WaitForSeconds(1f);
+
+        if (resetPromptUI != null)
+        {
+            resetPromptUI.SetActive(true);
         }
     }
 }

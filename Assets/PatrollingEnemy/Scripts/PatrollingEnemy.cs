@@ -202,6 +202,8 @@ public class PatrollingEnemy : MonoBehaviour
         isDead = true;
         isAttacking = false;
 
+        ScoreManager.AddPatrollingEnemyKillScore();
+
         if (attackRoutine != null)
         {
             StopCoroutine(attackRoutine);
