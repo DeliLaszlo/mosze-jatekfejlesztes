@@ -75,6 +75,7 @@ public class SceneEdgeTransitionTrigger : MonoBehaviour
         transitionTriggered = true;
         JumpKingSceneTransitionState.BeginTransition(targetEntryPointId, carryVelocity);
         JumpKingSceneTransitionState.LockTriggers(triggerLockDuration);
+        MusicManager.instance.PlayMusicForScene(targetSceneName);
         SceneManager.LoadScene(targetSceneName, LoadSceneMode.Single);
     }
 }

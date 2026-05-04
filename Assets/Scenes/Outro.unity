@@ -260,6 +260,103 @@ MonoBehaviour:
   fadeDuration: 1
   nextScene: TempLevel
   spaceButtonUI: {fileID: 2131816828}
+--- !u!1001 &397811343
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302228030284637491, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4199408174377155418, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
+      propertyPath: m_Name
+      value: ScreenFadeCanvas
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9ba9978d90e49654db5cfaab3c3fe96b, type: 3}
 --- !u!1 &576795637
 GameObject:
   m_ObjectHideFlags: 0
@@ -597,6 +694,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -1013,4 +1111,5 @@ SceneRoots:
   - {fileID: 7247474885928340558}
   - {fileID: 1662126879}
   - {fileID: 225285316}
+  - {fileID: 397811343}
   - {fileID: 2127315477}

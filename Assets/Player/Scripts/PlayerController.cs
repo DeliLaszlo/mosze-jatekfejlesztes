@@ -2,363 +2,388 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-	[SerializeField] private float moveSpeed = 5f;
-	[SerializeField] private float minJumpForce = 8f;
-	[SerializeField] private float maxJumpForce = 20f;
-	[SerializeField] private float chargeSpeed = 1f;
-	[SerializeField] private bool lockHorizontalWhileCharging = true;
-	[SerializeField] private KeyCode jumpKey = KeyCode.Space;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float minJumpForce = 8f;
+    [SerializeField] private float maxJumpForce = 20f;
+    [SerializeField] private float chargeSpeed = 1f;
+    [SerializeField] private bool lockHorizontalWhileCharging = true;
+    [SerializeField] private KeyCode jumpKey = KeyCode.Space;
 
-	[SerializeField] private Transform groundCheck;
-	[SerializeField] private float groundCheckRadius = 0.2f;
-	[SerializeField] private LayerMask groundLayer;
-	[SerializeField] private float jumpGroundDetachTime = 0.08f;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float jumpGroundDetachTime = 0.08f;
 
-	[SerializeField] private string walkParameterName = "isWalking";
-	[SerializeField] private string groundedParameterName = "isGrounded";
-	[SerializeField] private string yVelocityParameterName = "yVelocity";
-	[SerializeField] private bool forceGroundMoveStates = true;
-	[SerializeField] private string idleStateName = "Idle";
-	[SerializeField] private string runStateName = "Running";
-	[SerializeField] private bool forceAscendStateOnJump = true;
-	[SerializeField] private string ascendStateName = "Ascend";
-	[SerializeField] private bool forceDescendStateOnWalkOff = true;
-	[SerializeField] private string descendStateName = "Descend";
-	[SerializeField] private Transform visualRoot;
-	[SerializeField] private bool useProceduralChargePose = true;
-	[SerializeField, Range(0f, 0.5f)] private float chargeSquashY = 0.25f;
-	[SerializeField, Range(0f, 0.5f)] private float chargeStretchX = 0.18f;
-	[SerializeField, Range(0f, 0.5f)] private float chargeDipY = 0.08f;
-	[SerializeField] private float chargePoseBlendSpeed = 12f;
-	[SerializeField] private Color chargeTint = new Color(1f, 0.93f, 0.8f, 1f);
-	[SerializeField, Range(0f, 1f)] private float chargeTintStrength = 0.2f;
+    [SerializeField] private string walkParameterName = "isWalking";
+    [SerializeField] private string groundedParameterName = "isGrounded";
+    [SerializeField] private string yVelocityParameterName = "yVelocity";
+    [SerializeField] private bool forceGroundMoveStates = true;
+    [SerializeField] private string idleStateName = "Idle";
+    [SerializeField] private string runStateName = "Running";
+    [SerializeField] private bool forceAscendStateOnJump = true;
+    [SerializeField] private string ascendStateName = "Ascend";
+    [SerializeField] private bool forceDescendStateOnWalkOff = true;
+    [SerializeField] private string descendStateName = "Descend";
+    [SerializeField] private Transform visualRoot;
+    [SerializeField] private bool useProceduralChargePose = true;
+    [SerializeField, Range(0f, 0.5f)] private float chargeSquashY = 0.25f;
+    [SerializeField, Range(0f, 0.5f)] private float chargeStretchX = 0.18f;
+    [SerializeField, Range(0f, 0.5f)] private float chargeDipY = 0.08f;
+    [SerializeField] private float chargePoseBlendSpeed = 12f;
+    [SerializeField] private Color chargeTint = new Color(1f, 0.93f, 0.8f, 1f);
+    [SerializeField, Range(0f, 1f)] private float chargeTintStrength = 0.2f;
 
-	private Rigidbody2D rb;
-	private SpriteRenderer spriteRenderer;
-	private Animator animator;
-	private Vector3 baseVisualLocalScale;
-	private Vector3 baseVisualLocalPosition;
-	private Color baseSpriteColor = Color.white;
-	private float chargePoseWeight;
-	private int facingDirection = 1;
-	private float horizontalInput;
-	private bool isGrounded;
-	private bool wasGrounded;
-	private bool isCharging;
-	private float jumpCharge;
-	private float jumpGroundDetachTimer;
+    [Header("Audio")]
+    [SerializeField] private AudioSource jumpAudioPrefab;
+    [SerializeField] private AudioSource jumpChargeAudioPrefab;
+    
+    private AudioSource jumpAudioInstance;
+    private AudioSource jumpChargeAudioInstance;
 
-	private void Awake()
-	{
-		rb = GetComponent<Rigidbody2D>();
+    private Rigidbody2D rb;
+    private SpriteRenderer spriteRenderer;
+    private Animator animator;
+    private Vector3 baseVisualLocalScale;
+    private Vector3 baseVisualLocalPosition;
+    private Color baseSpriteColor = Color.white;
+    private float chargePoseWeight;
+    private int facingDirection = 1;
+    private float horizontalInput;
+    private bool isGrounded;
+    private bool wasGrounded;
+    private bool isCharging;
+    private float jumpCharge;
+    private float jumpGroundDetachTimer;
 
-		if (visualRoot == null)
-		{
-			visualRoot = transform;
-		}
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
 
-		if (visualRoot != null)
-		{
-			animator = visualRoot.GetComponent<Animator>();
-			spriteRenderer = visualRoot.GetComponent<SpriteRenderer>();
-		}
+        if (visualRoot == null)
+        {
+            visualRoot = transform;
+        }
 
-		if (animator == null)
-		{
-			animator = GetComponent<Animator>();
-		}
+        if (visualRoot != null)
+        {
+            animator = visualRoot.GetComponent<Animator>();
+            spriteRenderer = visualRoot.GetComponent<SpriteRenderer>();
+        }
 
-		if (spriteRenderer == null)
-		{
-			spriteRenderer = GetComponent<SpriteRenderer>();
-		}
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
 
-		if (visualRoot != null)
-		{
-			baseVisualLocalScale = visualRoot.localScale;
-			baseVisualLocalPosition = visualRoot.localPosition;
-			facingDirection = baseVisualLocalScale.x < 0f ? -1 : 1;
-		}
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
 
-		if (spriteRenderer != null)
-		{
-			baseSpriteColor = spriteRenderer.color;
-		}
-	}
+        if (visualRoot != null)
+        {
+            baseVisualLocalScale = visualRoot.localScale;
+            baseVisualLocalPosition = visualRoot.localPosition;
+            facingDirection = baseVisualLocalScale.x < 0f ? -1 : 1;
+        }
 
-	private void Update()
-	{
-		bool justLeftGround = wasGrounded && !isGrounded;
+        if (spriteRenderer != null)
+        {
+            baseSpriteColor = spriteRenderer.color;
+        }
 
-		horizontalInput = ReadHorizontalInput();
+        if (jumpAudioPrefab != null)
+        {
+            jumpAudioInstance = Instantiate(jumpAudioPrefab, transform);
+        }
+        
+        if (jumpChargeAudioPrefab != null)
+        {
+            jumpChargeAudioInstance = Instantiate(jumpChargeAudioPrefab, transform);
+            jumpChargeAudioInstance.loop = true; 
+        }
+    }
 
-		if (horizontalInput > 0.01f)
-		{
-			ApplyFacing(1);
-		}
-		else if (horizontalInput < -0.01f)
-		{
-			ApplyFacing(-1);
-		}
+    private void Update()
+    {
+        bool justLeftGround = wasGrounded && !isGrounded;
 
-		if (isCharging && !isGrounded)
-		{
-			isCharging = false;
-			jumpCharge = 0f;
-		}
+        horizontalInput = ReadHorizontalInput();
 
-		if (isGrounded && Input.GetKey(jumpKey))
-		{
-			// #TODO: Add audio (jump charge buildup SFX).
-			isCharging = true;
-			jumpCharge += chargeSpeed * Time.deltaTime;
-			jumpCharge = Mathf.Clamp01(jumpCharge);
-		}
+        if (horizontalInput > 0.01f)
+        {
+            ApplyFacing(1);
+        }
+        else if (horizontalInput < -0.01f)
+        {
+            ApplyFacing(-1);
+        }
 
-		if (isCharging && Input.GetKeyUp(jumpKey))
-		{
-			float jumpForce = Mathf.Lerp(minJumpForce, maxJumpForce, jumpCharge);
-			// #TODO: Add audio (jump launch SFX).
-			rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-			isGrounded = false;
-			jumpGroundDetachTimer = jumpGroundDetachTime;
-			isCharging = false;
-			jumpCharge = 0f;
-			TrySnapToAscendState();
-		}
+        if (isCharging && !isGrounded)
+        {
+            isCharging = false;
+            jumpCharge = 0f;
+            if (jumpChargeAudioInstance != null) jumpChargeAudioInstance.Stop();
+        }
 
-		UpdateChargePose();
+        if (isGrounded && Input.GetKey(jumpKey))
+        {
+            if (!isCharging)
+            {
+                isCharging = true;
+                if (jumpChargeAudioInstance != null) jumpChargeAudioInstance.Play();
+            }
+            
+            jumpCharge += chargeSpeed * Time.deltaTime;
+            jumpCharge = Mathf.Clamp01(jumpCharge);
+        }
 
-		bool isTryingToWalk = Mathf.Abs(horizontalInput) > 0.01f && isGrounded && !isCharging;
-		// #TODO: Add audio (footstep loop when walking while grounded).
+        if (isCharging && Input.GetKeyUp(jumpKey))
+        {
+            float jumpForce = Mathf.Lerp(minJumpForce, maxJumpForce, jumpCharge);
+            
+            if (jumpChargeAudioInstance != null) jumpChargeAudioInstance.Stop();
+            if (jumpAudioInstance != null) jumpAudioInstance.Play();
 
-		if (animator != null)
-		{
-			float animationYVelocity = rb != null ? rb.linearVelocity.y : 0f;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            isGrounded = false;
+            jumpGroundDetachTimer = jumpGroundDetachTime;
+            isCharging = false;
+            jumpCharge = 0f;
+            TrySnapToAscendState();
+        }
 
-			if (justLeftGround && animationYVelocity > -0.01f)
-			{
-				animationYVelocity = -0.01f;
-			}
+        UpdateChargePose();
 
-			TrySetBool(walkParameterName, isTryingToWalk);
-			TrySetBool(groundedParameterName, isGrounded);
-			TrySetFloat(yVelocityParameterName, animationYVelocity);
+        bool isTryingToWalk = Mathf.Abs(horizontalInput) > 0.01f && isGrounded && !isCharging;
 
-			if (forceGroundMoveStates && isGrounded)
-			{
-				if (isTryingToWalk)
-				{
-					TrySnapToStateIfNeeded(runStateName);
-				}
-				else
-				{
-					TrySnapToStateIfNeeded(idleStateName);
-				}
-			}
+        if (animator != null)
+        {
+            float animationYVelocity = rb != null ? rb.linearVelocity.y : 0f;
 
-			if (justLeftGround && !isCharging)
-			{
-				TrySnapToDescendState();
-			}
-		}
+            if (justLeftGround && animationYVelocity > -0.01f)
+            {
+                animationYVelocity = -0.01f;
+            }
 
-		wasGrounded = isGrounded;
-	}
+            TrySetBool(walkParameterName, isTryingToWalk);
+            TrySetBool(groundedParameterName, isGrounded);
+            TrySetFloat(yVelocityParameterName, animationYVelocity);
 
-	private void FixedUpdate()
-	{
-		if (rb == null)
-		{
-			return;
-		}
+            if (forceGroundMoveStates && isGrounded)
+            {
+                if (isTryingToWalk)
+                {
+                    TrySnapToStateIfNeeded(runStateName);
+                }
+                else
+                {
+                    TrySnapToStateIfNeeded(idleStateName);
+                }
+            }
 
-		if (jumpGroundDetachTimer > 0f)
-		{
-			jumpGroundDetachTimer -= Time.fixedDeltaTime;
-			isGrounded = false;
-		}
-		else if (groundCheck != null)
-		{
-			isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-		}
+            if (justLeftGround && !isCharging)
+            {
+                TrySnapToDescendState();
+            }
+        }
 
-		float horizontalFactor = lockHorizontalWhileCharging && isCharging ? 0f : 1f;
-		rb.linearVelocity = new Vector2(horizontalInput * moveSpeed * horizontalFactor, rb.linearVelocity.y);
-	}
+        wasGrounded = isGrounded;
+    }
 
-	private float ReadHorizontalInput()
-	{
-		float value = 0f;
+    private void FixedUpdate()
+    {
+        if (rb == null)
+        {
+            return;
+        }
 
-		if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-		{
-			value -= 1f;
-		}
+        if (jumpGroundDetachTimer > 0f)
+        {
+            jumpGroundDetachTimer -= Time.fixedDeltaTime;
+            isGrounded = false;
+        }
+        else if (groundCheck != null)
+        {
+            isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        }
 
-		if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-		{
-			value += 1f;
-		}
+        float horizontalFactor = lockHorizontalWhileCharging && isCharging ? 0f : 1f;
+        rb.linearVelocity = new Vector2(horizontalInput * moveSpeed * horizontalFactor, rb.linearVelocity.y);
+    }
 
-		if (Mathf.Abs(value) > 0.01f)
-		{
-			return Mathf.Clamp(value, -1f, 1f);
-		}
+    private float ReadHorizontalInput()
+    {
+        float value = 0f;
 
-		return Input.GetAxisRaw("Horizontal");
-	}
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            value -= 1f;
+        }
 
-	private void ApplyFacing(int direction)
-	{
-		facingDirection = direction >= 0 ? 1 : -1;
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            value += 1f;
+        }
 
-		if (visualRoot != null && visualRoot != transform)
-		{
-			Vector3 scale = visualRoot.localScale;
-			scale.x = Mathf.Abs(scale.x) * facingDirection;
-			visualRoot.localScale = scale;
-			return;
-		}
+        if (Mathf.Abs(value) > 0.01f)
+        {
+            return Mathf.Clamp(value, -1f, 1f);
+        }
 
-		if (spriteRenderer != null)
-		{
-			spriteRenderer.flipX = facingDirection < 0;
-		}
-	}
+        return Input.GetAxisRaw("Horizontal");
+    }
 
-	private void UpdateChargePose()
-	{
-		if (!useProceduralChargePose)
-		{
-			ResetChargePoseVisuals();
-			return;
-		}
+    private void ApplyFacing(int direction)
+    {
+        facingDirection = direction >= 0 ? 1 : -1;
 
-		float targetWeight = isGrounded && isCharging ? jumpCharge : 0f;
-		chargePoseWeight = Mathf.MoveTowards(chargePoseWeight, targetWeight, chargePoseBlendSpeed * Time.deltaTime);
+        if (visualRoot != null && visualRoot != transform)
+        {
+            Vector3 scale = visualRoot.localScale;
+            scale.x = Mathf.Abs(scale.x) * facingDirection;
+            visualRoot.localScale = scale;
+            return;
+        }
 
-		if (visualRoot != null && visualRoot != transform)
-		{
-			float xMultiplier = 1f + chargeStretchX * chargePoseWeight;
-			float yMultiplier = 1f - chargeSquashY * chargePoseWeight;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.flipX = facingDirection < 0;
+        }
+    }
 
-			Vector3 scale = baseVisualLocalScale;
-			scale.x = Mathf.Abs(baseVisualLocalScale.x) * xMultiplier * facingDirection;
-			scale.y = baseVisualLocalScale.y * yMultiplier;
-			visualRoot.localScale = scale;
+    private void UpdateChargePose()
+    {
+        if (!useProceduralChargePose)
+        {
+            ResetChargePoseVisuals();
+            return;
+        }
 
-			Vector3 position = baseVisualLocalPosition;
-			position.y = baseVisualLocalPosition.y - chargeDipY * chargePoseWeight;
-			visualRoot.localPosition = position;
-		}
+        float targetWeight = isGrounded && isCharging ? jumpCharge : 0f;
+        chargePoseWeight = Mathf.MoveTowards(chargePoseWeight, targetWeight, chargePoseBlendSpeed * Time.deltaTime);
 
-		if (spriteRenderer != null)
-		{
-			spriteRenderer.color = Color.Lerp(baseSpriteColor, chargeTint, chargePoseWeight * chargeTintStrength);
-		}
-	}
+        if (visualRoot != null && visualRoot != transform)
+        {
+            float xMultiplier = 1f + chargeStretchX * chargePoseWeight;
+            float yMultiplier = 1f - chargeSquashY * chargePoseWeight;
 
-	private void ResetChargePoseVisuals()
-	{
-		chargePoseWeight = 0f;
+            Vector3 scale = baseVisualLocalScale;
+            scale.x = Mathf.Abs(baseVisualLocalScale.x) * xMultiplier * facingDirection;
+            scale.y = baseVisualLocalScale.y * yMultiplier;
+            visualRoot.localScale = scale;
 
-		if (visualRoot != null)
-		{
-			Vector3 scale = baseVisualLocalScale;
-			scale.x = Mathf.Abs(baseVisualLocalScale.x) * facingDirection;
-			visualRoot.localScale = scale;
-			visualRoot.localPosition = baseVisualLocalPosition;
-		}
+            Vector3 position = baseVisualLocalPosition;
+            position.y = baseVisualLocalPosition.y - chargeDipY * chargePoseWeight;
+            visualRoot.localPosition = position;
+        }
 
-		if (spriteRenderer != null)
-		{
-			spriteRenderer.color = baseSpriteColor;
-		}
-	}
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.Lerp(baseSpriteColor, chargeTint, chargePoseWeight * chargeTintStrength);
+        }
+    }
 
-	private void OnDisable()
-	{
-		ResetChargePoseVisuals();
-	}
+    private void ResetChargePoseVisuals()
+    {
+        chargePoseWeight = 0f;
 
-	private void TrySetBool(string parameterName, bool value)
-	{
-		if (!string.IsNullOrEmpty(parameterName))
-		{
-			animator.SetBool(parameterName, value);
-		}
-	}
+        if (visualRoot != null)
+        {
+            Vector3 scale = baseVisualLocalScale;
+            scale.x = Mathf.Abs(baseVisualLocalScale.x) * facingDirection;
+            visualRoot.localScale = scale;
+            visualRoot.localPosition = baseVisualLocalPosition;
+        }
 
-	private void TrySetFloat(string parameterName, float value)
-	{
-		if (!string.IsNullOrEmpty(parameterName))
-		{
-			animator.SetFloat(parameterName, value);
-		}
-	}
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = baseSpriteColor;
+        }
+    }
 
-	private void TrySnapToAscendState()
-	{
-		if (!forceAscendStateOnJump || animator == null || string.IsNullOrEmpty(ascendStateName))
-		{
-			return;
-		}
+    private void OnDisable()
+    {
+        ResetChargePoseVisuals();
+    }
 
-		int stateHash = Animator.StringToHash(ascendStateName);
-		if (animator.HasState(0, stateHash))
-		{
-			animator.Play(stateHash, 0, 0f);
-		}
-	}
+    private void TrySetBool(string parameterName, bool value)
+    {
+        if (!string.IsNullOrEmpty(parameterName))
+        {
+            animator.SetBool(parameterName, value);
+        }
+    }
 
-	private void TrySnapToDescendState()
-	{
-		if (!forceDescendStateOnWalkOff || animator == null || string.IsNullOrEmpty(descendStateName))
-		{
-			return;
-		}
+    private void TrySetFloat(string parameterName, float value)
+    {
+        if (!string.IsNullOrEmpty(parameterName))
+        {
+            animator.SetFloat(parameterName, value);
+        }
+    }
 
-		int stateHash = Animator.StringToHash(descendStateName);
-		if (animator.HasState(0, stateHash))
-		{
-			animator.Play(stateHash, 0, 0f);
-		}
-	}
+    private void TrySnapToAscendState()
+    {
+        if (!forceAscendStateOnJump || animator == null || string.IsNullOrEmpty(ascendStateName))
+        {
+            return;
+        }
 
-	private void TrySnapToStateIfNeeded(string stateName)
-	{
-		if (animator == null || string.IsNullOrEmpty(stateName))
-		{
-			return;
-		}
+        int stateHash = Animator.StringToHash(ascendStateName);
+        if (animator.HasState(0, stateHash))
+        {
+            animator.Play(stateHash, 0, 0f);
+        }
+    }
 
-		int shortStateHash = Animator.StringToHash(stateName);
-		int baseLayerStateHash = Animator.StringToHash("Base Layer." + stateName);
+    private void TrySnapToDescendState()
+    {
+        if (!forceDescendStateOnWalkOff || animator == null || string.IsNullOrEmpty(descendStateName))
+        {
+            return;
+        }
 
-		if (!animator.HasState(0, shortStateHash) && !animator.HasState(0, baseLayerStateHash))
-		{
-			return;
-		}
+        int stateHash = Animator.StringToHash(descendStateName);
+        if (animator.HasState(0, stateHash))
+        {
+            animator.Play(stateHash, 0, 0f);
+        }
+    }
 
-		AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-		if (stateInfo.shortNameHash == shortStateHash || stateInfo.fullPathHash == baseLayerStateHash)
-		{
-			return;
-		}
+    private void TrySnapToStateIfNeeded(string stateName)
+    {
+        if (animator == null || string.IsNullOrEmpty(stateName))
+        {
+            return;
+        }
 
-		int targetHash = animator.HasState(0, baseLayerStateHash) ? baseLayerStateHash : shortStateHash;
-		animator.Play(targetHash, 0, 0f);
-	}
+        int shortStateHash = Animator.StringToHash(stateName);
+        int baseLayerStateHash = Animator.StringToHash("Base Layer." + stateName);
 
-	private void OnDrawGizmosSelected()
-	{
-		if (groundCheck == null)
-		{
-			return;
-		}
+        if (!animator.HasState(0, shortStateHash) && !animator.HasState(0, baseLayerStateHash))
+        {
+            return;
+        }
 
-		Gizmos.color = Color.red;
-		Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
-	}
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        if (stateInfo.shortNameHash == shortStateHash || stateInfo.fullPathHash == baseLayerStateHash)
+        {
+            return;
+        }
+
+        int targetHash = animator.HasState(0, baseLayerStateHash) ? baseLayerStateHash : shortStateHash;
+        animator.Play(targetHash, 0, 0f);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (groundCheck == null)
+        {
+            return;
+        }
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+    }
 }

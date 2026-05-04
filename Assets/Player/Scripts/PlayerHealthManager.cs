@@ -23,6 +23,13 @@ public class PlayerHealthManager : MonoBehaviour
     [SerializeField] private GameObject gameOverUI;
     [SerializeField] private GameObject resetPromptUI;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource hurtAudioPrefab;
+    [SerializeField] private AudioSource deathAudioPrefab;
+
+    private AudioSource hurtAudioInstance;
+    private AudioSource deathAudioInstance;
+
     private Animator animator;
     private Rigidbody2D rb;
     private int currentHealth;
@@ -56,6 +63,16 @@ public class PlayerHealthManager : MonoBehaviour
             currentHealth = maxHealth;
         }
 
+        if (hurtAudioPrefab != null)
+        {
+            hurtAudioInstance = Instantiate(hurtAudioPrefab, transform);
+        }
+        
+        if (deathAudioPrefab != null)
+        {
+            deathAudioInstance = Instantiate(deathAudioPrefab, transform);
+        }
+
         PersistHealth();
         HealthChanged?.Invoke(currentHealth, maxHealth);
 
@@ -77,9 +94,10 @@ public class PlayerHealthManager : MonoBehaviour
         PersistHealth();
         HealthChanged?.Invoke(currentHealth, maxHealth);
 
+        if (hurtAudioInstance != null) hurtAudioInstance.Play();
+
         if (animator != null && !string.IsNullOrEmpty(takeDamageTriggerName))
         {
-            // #TODO: Add audio (player hurt SFX).
             animator.SetTrigger(takeDamageTriggerName);
         }
 
@@ -116,9 +134,10 @@ public class PlayerHealthManager : MonoBehaviour
 
         isDead = true;
 
+        if (deathAudioInstance != null) deathAudioInstance.Play();
+
         if (animator != null && !string.IsNullOrEmpty(deathBoolName))
         {
-            // #TODO: Add audio (player death SFX).
             animator.SetBool(deathBoolName, true);
         }
 

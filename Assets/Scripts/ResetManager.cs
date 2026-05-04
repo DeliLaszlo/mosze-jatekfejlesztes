@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -37,6 +38,14 @@ public class ResetManager : MonoBehaviour
         }
 
         isResetting = true;
+        StartCoroutine(ResetRoutine());
+    }
+
+    private IEnumerator ResetRoutine()
+    {
+        ScreenFader.FadeOut(0.25f);
+
+        yield return new WaitForSeconds(0.25f);
 
         PlayerHealthManager playerHealth = FindAnyObjectByType<PlayerHealthManager>();
         if (playerHealth != null)

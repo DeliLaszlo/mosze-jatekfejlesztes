@@ -13,16 +13,26 @@ public class BossSpawner : MonoBehaviour
     public float fireRate = 1.2f;
     public int bulletCount = 3; 
 
-
     [Header("Boss reSpawn")]
     public SpriteRenderer bossSprite; 
     public float teleportRange = 5f;  
     private BossSequence movementScript;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource fireballShootAudioPrefab;
+
+    private AudioSource fireballShootAudioInstance;
+
     void Start()
     {
         startHP = hp;
         movementScript = GetComponent<BossSequence>(); 
+
+        if (fireballShootAudioPrefab != null)
+        {
+            fireballShootAudioInstance = Instantiate(fireballShootAudioPrefab, transform);
+        }
+
         StartCoroutine(BossLogicRoutine());
     }
 
@@ -30,7 +40,6 @@ public class BossSpawner : MonoBehaviour
     {
         while (true)
         {
-
             if (movementScript != null && movementScript.IsMoving())
             {
                 ShootFan();
@@ -43,41 +52,41 @@ public class BossSpawner : MonoBehaviour
         }
     }
 
-void ShootFan()
-{
-    if (bulletPrefab == null) return;
-    GameObject player = GameObject.FindGameObjectWithTag("Player");
-    if (player == null) return;
-
-    Vector2 directionToPlayer = player.transform.position - transform.position;
-    float centerAngle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg - 90f;
-
-
-    int lostHP = startHP - hp;
-    int currentBulletCount = bulletCount + (lostHP / 4) * 2;
-    float angleStep = (currentBulletCount >= 7) ? 20f : 30f;
-    if (currentBulletCount <= 3) angleStep = 45f;
-
-    float totalSpread = angleStep * (currentBulletCount - 1);
-    float startAngle = centerAngle - (totalSpread / 2f);
-
-    for (int i = 0; i < currentBulletCount; i++)
+    void ShootFan()
     {
-        float currentAngle = startAngle + (i * angleStep);
-        Quaternion rotation = Quaternion.Euler(0, 0, currentAngle);
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, rotation);
+        if (bulletPrefab == null) return;
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
 
-        if (bullet.TryGetComponent<Collider2D>(out Collider2D bulletCol))
+        if (fireballShootAudioInstance != null) fireballShootAudioInstance.Play();
+
+        Vector2 directionToPlayer = player.transform.position - transform.position;
+        float centerAngle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg - 90f;
+
+        int lostHP = startHP - hp;
+        int currentBulletCount = bulletCount + (lostHP / 4) * 2;
+        float angleStep = (currentBulletCount >= 7) ? 20f : 30f;
+        if (currentBulletCount <= 3) angleStep = 45f;
+
+        float totalSpread = angleStep * (currentBulletCount - 1);
+        float startAngle = centerAngle - (totalSpread / 2f);
+
+        for (int i = 0; i < currentBulletCount; i++)
         {
-            Physics2D.IgnoreCollision(bulletCol, GetComponent<Collider2D>());
-        }
-        if (bullet.TryGetComponent(out SimpleBullet sBullet))
-        {
-            sBullet.Setup(bulletSpeed);
+            float currentAngle = startAngle + (i * angleStep);
+            Quaternion rotation = Quaternion.Euler(0, 0, currentAngle);
+            GameObject bullet = Instantiate(bulletPrefab, transform.position, rotation);
+
+            if (bullet.TryGetComponent<Collider2D>(out Collider2D bulletCol))
+            {
+                Physics2D.IgnoreCollision(bulletCol, GetComponent<Collider2D>());
+            }
+            if (bullet.TryGetComponent(out SimpleBullet sBullet))
+            {
+                sBullet.Setup(bulletSpeed);
+            }
         }
     }
-}
-
 
     private bool isInvulnerable = false;
 
@@ -88,6 +97,7 @@ void ShootFan()
             TakeDamage(1);
         }
     }
+    
     public void TakeDamage(int damage)
     {
         hp -= damage;
@@ -107,6 +117,7 @@ void ShootFan()
     {
         Destroy(gameObject); 
         Debug.Log("Boss legyőzve!");
+        MusicManager.instance.PlayMusicForScene("Outro");
         SceneManager.LoadScene("Outro"); 
     }
 

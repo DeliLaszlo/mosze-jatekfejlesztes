@@ -247,3 +247,4 @@ MonoBehaviour:
   fallbackInteractKey: 101
   urnRootToDisable: {fileID: 4719451000012160508}
   interactUI: {fileID: 348954116634246289}
+  breakAudioPrefab: {fileID: 8327222419293641410, guid: 9786b18c9d70c7d4fb92c2af8f5cc1c2, type: 3}

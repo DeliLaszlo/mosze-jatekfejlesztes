@@ -11,6 +11,9 @@ public class GoldUrnInteractable : MonoBehaviour
     [SerializeField] private GameObject urnRootToDisable;
     [SerializeField] private GameObject interactUI;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource breakAudioPrefab;
+
     private int playersInRange;
     private bool isBroken;
     private string urnStateKey;
@@ -118,6 +121,13 @@ public class GoldUrnInteractable : MonoBehaviour
 
         ScoreManager.AddGoldUrnScore();
 
+        if (breakAudioPrefab != null)
+        {
+            AudioSource breakSfx = Instantiate(breakAudioPrefab, transform.position, Quaternion.identity);
+            breakSfx.Play();
+            Destroy(breakSfx.gameObject, breakSfx.clip != null ? breakSfx.clip.length : 2f);
+        }
+
         if (interactUI != null)
         {
             interactUI.SetActive(false);
@@ -127,7 +137,5 @@ public class GoldUrnInteractable : MonoBehaviour
         {
             urnRootToDisable.SetActive(false);
         }
-
-        // TODO: Add audio (urn breaking SFX).
     }
 }

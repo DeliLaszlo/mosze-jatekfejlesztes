@@ -8,6 +8,7 @@ TagManager:
   - Boss
   - Projectile
   - Box
+  - Hitbox
   layers:
   - Default
   - TransparentFX

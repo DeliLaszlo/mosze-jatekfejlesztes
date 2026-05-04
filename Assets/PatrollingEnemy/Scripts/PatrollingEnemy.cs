@@ -25,6 +25,10 @@ public class PatrollingEnemy : MonoBehaviour
     [Header("Death")]
     [SerializeField] private string deathTriggerName = "Death";
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource attackAudioPrefab;
+    [SerializeField] private AudioSource deathAudioPrefab;
+
     private Rigidbody2D rb;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
@@ -147,8 +151,14 @@ public class PatrollingEnemy : MonoBehaviour
 
         if (animator != null && !string.IsNullOrEmpty(attackTriggerName))
         {
-            // #TODO: Add audio (enemy attack swing SFX).
             animator.SetTrigger(attackTriggerName);
+        }
+
+        if (attackAudioPrefab != null)
+        {
+            AudioSource attackSfx = Instantiate(attackAudioPrefab, transform.position, Quaternion.identity);
+            attackSfx.Play();
+            Destroy(attackSfx.gameObject, attackSfx.clip != null ? attackSfx.clip.length : 2f);
         }
 
         if (target != null)
@@ -212,8 +222,14 @@ public class PatrollingEnemy : MonoBehaviour
 
         if (animator != null && !string.IsNullOrEmpty(deathTriggerName))
         {
-            // #TODO: Add audio (enemy death SFX).
             animator.SetTrigger(deathTriggerName);
+        }
+
+        if (deathAudioPrefab != null)
+        {
+            AudioSource deathSfx = Instantiate(deathAudioPrefab, transform.position, Quaternion.identity);
+            deathSfx.Play();
+            Destroy(deathSfx.gameObject, deathSfx.clip != null ? deathSfx.clip.length : 2f);
         }
 
         Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
@@ -244,7 +260,6 @@ public class PatrollingEnemy : MonoBehaviour
             return;
         }
 
-        
         spriteRenderer.flipX = moveDirection < 0;
     }
 
@@ -259,7 +274,6 @@ public class PatrollingEnemy : MonoBehaviour
 
         if (useHeroKnightAnimator)
         {
-            
             animator.SetBool("Grounded", true);
             animator.SetBool("WallSlide", false);
             animator.SetFloat("AirSpeedY", 0f);
