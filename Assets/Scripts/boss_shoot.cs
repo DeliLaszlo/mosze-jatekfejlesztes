@@ -22,6 +22,7 @@ public class BossSpawner : MonoBehaviour
     [SerializeField] private AudioSource fireballShootAudioPrefab;
 
     private AudioSource fireballShootAudioInstance;
+    private GameObject playerTarget;
 
     void Start()
     {
@@ -32,6 +33,8 @@ public class BossSpawner : MonoBehaviour
         {
             fireballShootAudioInstance = Instantiate(fireballShootAudioPrefab, transform);
         }
+
+        playerTarget = GameObject.FindGameObjectWithTag("Player");
 
         StartCoroutine(BossLogicRoutine());
     }
@@ -55,12 +58,10 @@ public class BossSpawner : MonoBehaviour
     void ShootFan()
     {
         if (bulletPrefab == null) return;
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null) return;
 
         if (fireballShootAudioInstance != null) fireballShootAudioInstance.Play();
 
-        Vector2 directionToPlayer = player.transform.position - transform.position;
+        Vector2 directionToPlayer = playerTarget.transform.position - transform.position;
         float centerAngle = Mathf.Atan2(directionToPlayer.y, directionToPlayer.x) * Mathf.Rad2Deg - 90f;
 
         int lostHP = startHP - hp;
@@ -89,6 +90,7 @@ public class BossSpawner : MonoBehaviour
     }
 
     private bool isInvulnerable = false;
+    private bool isDead = false;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -100,6 +102,8 @@ public class BossSpawner : MonoBehaviour
     
     public void TakeDamage(int damage)
     {
+        if (isDead) return;
+
         hp -= damage;
         Debug.Log("Boss HP: " + hp);
 
@@ -109,15 +113,27 @@ public class BossSpawner : MonoBehaviour
         }
         else
         {
-            Die();
+            isDead = true;
+            StartCoroutine(DieRoutine());
         }
     }
 
-    private void Die()
+    private IEnumerator DieRoutine()
     {
-        Destroy(gameObject); 
+        if (TryGetComponent<Collider2D>(out Collider2D col))
+        {
+            col.enabled = false;
+        }
+
         Debug.Log("Boss legyőzve!");
-        MusicManager.instance.PlayMusicForScene("Outro");
+
+        yield return new WaitForEndOfFrame();
+
+        if (MusicManager.instance != null)
+        {
+            MusicManager.instance.PlayMusicForScene("Outro");
+        }
+
         SceneManager.LoadScene("Outro"); 
     }
 

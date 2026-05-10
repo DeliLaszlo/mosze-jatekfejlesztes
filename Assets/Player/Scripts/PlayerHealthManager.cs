@@ -10,6 +10,9 @@ public class PlayerHealthManager : MonoBehaviour
     [Header("Health")]
     [SerializeField] private int maxHealth = 3;
 
+    [Header("Invincibility")]
+    [SerializeField] private float invincibilityDuration = 0.5f;
+
     [Header("Animation")]
     [SerializeField] private string takeDamageTriggerName = "takeDamage";
     [SerializeField] private string deathBoolName = "isDead";
@@ -34,6 +37,8 @@ public class PlayerHealthManager : MonoBehaviour
     private Rigidbody2D rb;
     private int currentHealth;
     private bool isDead;
+
+    private bool isInvincible;
 
     public event Action<int, int> HealthChanged;
 
@@ -83,9 +88,40 @@ public class PlayerHealthManager : MonoBehaviour
         }
     }
 
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+        PersistHealth();
+        HealthChanged?.Invoke(currentHealth, maxHealth);
+        isDead = false;
+        isInvincible = false;
+
+        if (animator != null && !string.IsNullOrEmpty(deathBoolName))
+        {
+            animator.SetBool(deathBoolName, false);
+        }
+
+        PlayerController controller = GetComponent<PlayerController>();
+        if (controller != null)
+        {
+            controller.enabled = true;
+        }
+
+        Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].enabled = true;
+        }
+
+        if (rb != null)
+        {
+            rb.simulated = true;
+        }
+    }
+
     public void TakeDamage()
     {
-        if (isDead)
+        if (isDead || isInvincible)
         {
             return;
         }
@@ -106,6 +142,17 @@ public class PlayerHealthManager : MonoBehaviour
             HandleDeath();
             TriggerGameOver();
         }
+        else
+        {
+            StartCoroutine(InvincibilityRoutine());
+        }
+    }
+
+    private IEnumerator InvincibilityRoutine()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincibilityDuration);
+        isInvincible = false;
     }
 
     public void SimulateDeath()
@@ -148,6 +195,20 @@ public class PlayerHealthManager : MonoBehaviour
             {
                 controller.enabled = false;
             }
+        }
+
+        StartCoroutine(HandleDeathPhysicsRoutine());
+    }
+
+    private IEnumerator HandleDeathPhysicsRoutine()
+    {
+        if (rb != null)
+        {
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+
+            yield return new WaitForFixedUpdate();
+
+            yield return new WaitUntil(() => Mathf.Abs(rb.linearVelocity.y) < 0.01f);
         }
 
         if (disableCollidersOnDeath)

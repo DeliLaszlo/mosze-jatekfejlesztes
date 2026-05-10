@@ -2,6 +2,18 @@
 
 A projekt fontosabb változásai itt kerülnek rögzítésre.
 
+## [2026-05-10]
+
+### Added
+
+- Linux build profile hozzáadva
+
+### Changed
+
+- `GameOverHandler` reset bug javítja
+- `PlayerHealthManager` invincibility frame és realisztikusabb death animáció ugrás közben
+- `boss_shoot` hard crash javítva a boss legyőzés után
+
 ## [2026-04-29]
 
 ### Added

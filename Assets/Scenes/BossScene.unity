@@ -5386,10 +5386,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39622afd8416d2744bd178f77ea3f567, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossSpawner
-  hp: 12
+  hp: 5
   bulletPrefab: {fileID: 1514655465107953604, guid: 1791c1a2299360244b8dc2bc36c05ad1, type: 3}
-  bulletSpeed: 6
-  fireRate: 1
+  bulletSpeed: 5
+  fireRate: 1.25
   bulletCount: 3
   bossSprite: {fileID: 1863371436}
   teleportRange: 5

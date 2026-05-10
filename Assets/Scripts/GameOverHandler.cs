@@ -19,6 +19,20 @@ public class GameOverHandler : MonoBehaviour
     public void RestartLevel()
     {
         Debug.Log("Restarting Level: " + restartSceneName);
+
+        PlayerHealthManager playerHealthManager = FindAnyObjectByType<PlayerHealthManager>();
+
+        if (playerHealthManager != null)
+        {
+            playerHealthManager.ResetHealth();
+        }
+        else
+        {
+            Debug.LogWarning("PlayerHealthManager not found in scene. Cannot reset health.");
+            return;
+        }
+
+
         SceneManager.LoadScene(restartSceneName);
     }
 

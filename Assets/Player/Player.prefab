@@ -198,6 +198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealthManager
   maxHealth: 10
+  invincibilityDuration: 0.5
   takeDamageTriggerName: takeDamage
   deathBoolName: isDead
   disableControlsOnDeath: 1
