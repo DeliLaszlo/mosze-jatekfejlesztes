@@ -4,7 +4,11 @@
 TagManager:
   serializedVersion: 3
   tags:
+  - Platform
+  - Boss
+  - Projectile
   - Box
+  - Hitbox
   layers:
   - Default
   - TransparentFX

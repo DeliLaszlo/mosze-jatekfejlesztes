@@ -33,6 +33,17 @@ public class MageEnemyController : MonoBehaviour
     public Transform rootTransform;
     public Renderer spriteRenderer;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource staffSlamAudioPrefab;
+    [SerializeField] private AudioSource teleportAudioPrefab;
+    [SerializeField] private AudioSource mageDeathAudioPrefab;
+    [SerializeField] private AudioSource gateOpenAudioPrefab;
+
+    private AudioSource staffSlamAudioInstance;
+    private AudioSource teleportAudioInstance;
+    private AudioSource mageDeathAudioInstance;
+    private AudioSource gateOpenAudioInstance;
+
     private Animator anim;
     private string enemyStateKey;
 
@@ -82,6 +93,23 @@ public class MageEnemyController : MonoBehaviour
                     currentPointIndex = i;
                 }
             }
+        }
+
+        if (staffSlamAudioPrefab != null)
+        {
+            staffSlamAudioInstance = Instantiate(staffSlamAudioPrefab, transform);
+        }
+        if (teleportAudioPrefab != null)
+        {
+            teleportAudioInstance = Instantiate(teleportAudioPrefab, transform);
+        }
+        if (mageDeathAudioPrefab != null)
+        {
+            mageDeathAudioInstance = Instantiate(mageDeathAudioPrefab, transform);
+        }
+        if (gateOpenAudioPrefab != null)
+        {
+            gateOpenAudioInstance = Instantiate(gateOpenAudioPrefab, transform);
         }
 
         EnterShieldedState();
@@ -134,7 +162,8 @@ public class MageEnemyController : MonoBehaviour
 
     public void OnStaffHitGround()
     {
-        // #TODO: Add audio (staff slam impact SFX).
+        if (staffSlamAudioInstance != null) staffSlamAudioInstance.Play();
+        
         if (slamParticles != null) slamParticles.Play();
         ApplySlamDamage();
     }
@@ -174,7 +203,9 @@ public class MageEnemyController : MonoBehaviour
         {
             SetParticleColor(teleportOutParticles, outColor);
             teleportOutParticles.transform.position = rootTransform != null ? rootTransform.position : transform.position;
-            // #TODO: Add audio (teleport out whoosh SFX).
+            
+            if (teleportAudioInstance != null) teleportAudioInstance.Play();
+            
             teleportOutParticles.Play();
         }
         
@@ -189,7 +220,6 @@ public class MageEnemyController : MonoBehaviour
         if (teleportInParticles != null)
         {
             teleportInParticles.transform.position = rootTransform != null ? rootTransform.position : transform.position;
-            // #TODO: Add audio (teleport in materialize SFX).
             teleportInParticles.Play();
         }
 
@@ -304,7 +334,9 @@ public class MageEnemyController : MonoBehaviour
         {
             SetParticleColor(teleportOutParticles, normalTeleportOutColor);
             teleportOutParticles.transform.position = playerRoot.position;
-            // #TODO: Add audio (punish teleport out SFX).
+            
+            if (teleportAudioInstance != null) teleportAudioInstance.Play();
+            
             teleportOutParticles.Play();
         }
 
@@ -330,7 +362,6 @@ public class MageEnemyController : MonoBehaviour
             if (teleportInParticles != null)
             {
                 teleportInParticles.transform.position = newPos;
-                // #TODO: Add audio (punish teleport in SFX).
                 teleportInParticles.Play();
             }
         }
@@ -345,7 +376,8 @@ public class MageEnemyController : MonoBehaviour
 
         StopAllCoroutines(); 
 
-        // #TODO: Add audio (mage death SFX).
+        if (mageDeathAudioInstance != null) mageDeathAudioInstance.Play();
+        
         if (anim != null) anim.SetTrigger("Die");
 
         if (slamHitbox != null) slamHitbox.enabled = false;
@@ -364,12 +396,11 @@ public class MageEnemyController : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Kinematic; 
         }
 
-        GateHandler gate = FindFirstObjectByType<GateHandler>();
+        GateHandler gate = FindAnyObjectByType<GateHandler>();
         if (gate != null)
         {
             gate.disableSelf();
-            // TODO: Add audio (gate opening SFX).
+            if (gateOpenAudioInstance != null) gateOpenAudioInstance.Play();
         }
     }
-
 }

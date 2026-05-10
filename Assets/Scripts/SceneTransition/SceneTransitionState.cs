@@ -48,6 +48,14 @@ public static class JumpKingSceneTransitionState
 
         nextTriggerAllowedAt = Time.unscaledTime + duration;
     }
+
+    public static void ResetState()
+    {
+        hasPendingTransition = false;
+        pendingEntryPointId = SceneTransitionSpawnPoint.DefaultEntryPointId;
+        pendingVelocity = Vector2.zero;
+        nextTriggerAllowedAt = 0f;
+    }
 }
 
 public static class SceneTransitionLevelStateManager
@@ -61,6 +69,14 @@ public static class SceneTransitionLevelStateManager
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetForNewPlaySession()
+    {
+        brokenUrnKeys.Clear();
+        defeatedEnemyKeys.Clear();
+        disabledGateKeys.Clear();
+        savedStateApplyDepth = 0;
+    }
+
+    public static void ResetState()
     {
         brokenUrnKeys.Clear();
         defeatedEnemyKeys.Clear();

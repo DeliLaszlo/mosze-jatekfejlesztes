@@ -374,6 +374,8 @@ MonoBehaviour:
   attackDuration: 0.45
   destroyPlayerOnAttack: 0
   deathTriggerName: Death
+  attackAudioPrefab: {fileID: 6767397129618431207, guid: 8506addeb24f61247a9e06bec0653fde, type: 3}
+  deathAudioPrefab: {fileID: 6943645972107447238, guid: 41cef53e324307640813049c61c21642, type: 3}
 --- !u!1 &4716095807844034231
 GameObject:
   m_ObjectHideFlags: 0

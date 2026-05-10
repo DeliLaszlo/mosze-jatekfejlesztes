@@ -6,12 +6,8 @@
         "UnityEditor.TestRunner",
         "Unity.TextMeshPro",
         "UnityEngine.UI",
-        "ScriptsDefinition",
-        "PlayerAssembly",
-        "PatrollingEnemyAssembly",
-        "MageEnemyAssembly",
-        "ScoreAssembly",
-        "SceneTransitionAssembly"
+        "MainAssembly",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [
         "Editor"

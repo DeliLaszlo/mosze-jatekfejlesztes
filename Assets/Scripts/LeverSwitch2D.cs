@@ -11,11 +11,21 @@ public class LeverSwitch2D : MonoBehaviour
     [Header("Interaction")]
     public KeyCode interactKey = KeyCode.E;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource switchAudioPrefab;
+
+    private AudioSource switchAudioInstance;
+
     private bool playerInRange = false;
     private bool isOn = false;
 
     private void Start()
     {
+        if (switchAudioPrefab != null)
+        {
+            switchAudioInstance = Instantiate(switchAudioPrefab, transform);
+        }
+
         UpdateVisual();
     }
 
@@ -30,6 +40,8 @@ public class LeverSwitch2D : MonoBehaviour
     private void ToggleLever()
     {
         isOn = !isOn;
+
+        if (switchAudioInstance != null) switchAudioInstance.Play();
 
         UpdateVisual();
 

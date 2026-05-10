@@ -26,6 +26,12 @@ public static class ScoreManager
         ScoreChanged?.Invoke(currentScore);
     }
 
+    public static void SetScore(int score)
+    {
+        currentScore = Mathf.Max(0, score);
+        ScoreChanged?.Invoke(currentScore);
+    }
+
     public static void AddPoints(int points)
     {
         if (points <= 0)

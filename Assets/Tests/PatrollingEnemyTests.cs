@@ -105,7 +105,6 @@ public class PatrollingEnemyTests
 
         TestUtilities.SetPrivateField(enemy, "rb", rb);
 
-        TestUtilities.InvokePrivateMethod(enemy, "Awake");
         enemy.DieFromStomp();
 
         Assert.IsFalse(enemy.enabled);
@@ -225,7 +224,6 @@ public class StompTests
     {
         GameObject enemyRoot = new GameObject("EnemyRoot");
         PatrollingEnemy enemy = enemyRoot.AddComponent<PatrollingEnemy>();
-        TestUtilities.InvokePrivateMethod(enemy, "Awake");
 
         GameObject stompObject = new GameObject("Stomp");
         stompObject.transform.SetParent(enemyRoot.transform, false);

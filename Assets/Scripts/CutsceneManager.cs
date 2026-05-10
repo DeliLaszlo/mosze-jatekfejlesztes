@@ -58,6 +58,7 @@ public class CutsceneManager : MonoBehaviour
         }
         else
         {
+            MusicManager.instance.PlayMusicForScene(nextScene);
             SceneManager.LoadScene(nextScene);
         }
     }
