@@ -35,6 +35,7 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - `Awake()`: max/current health inicializálás.
 - `TakeDamage()`: HP csökkentés, sebzés animáció, halál ellenőrzés.
 - `HandleDeath()`: animáció, irányítás/collider/fizika tiltása.
+- `ClearPersistedHealth()`: Statikus metódus, perzisztens életpontok nullázására (pl. főmenüből való újrakezdéskor).
 
 ### 1.3 `PlayerHealthBlocksUI`
 
@@ -161,6 +162,7 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 - Bevezető képsor (`Intro`) paneljeinek időzített kezelése.
 - Panelváltás fade animációval.
 - Továbbhaladás a következő jelenetre (`nextScene`) automatikusan vagy Space gombbal.
+- Győzelmi panel támogatás: A `stopAtLastImage` opciónak köszönhetően a slideshow képes megállni és kint maradni az utolsó képen, átmenet helyett.
 
 **Fő viselkedés:**
 
@@ -339,11 +341,29 @@ Ez a fájl az Aetheria játék részletes dokumentációját tartalmazza.
 
 - `OnTriggerEnter2D()`: ha a Player belép, a `sceneToLoad` jelenetre vált.
 
-## 8. Automata Tesztelés (Unit Tests)
+## 8. Menü és UI rendszerek
+
+### 8.1 `MainMenu`
+
+**Fájl:** `Assets/Scripts/MainMenu.cs`
+
+**Feladat:**
+
+- Főmenü funkcionalitás, játék indítása, beállítások és kilépés kezelése.
+- Highscore (ranglista) megjelenítése és adatainak betöltése helyi tárolóból (`PlayerPrefs`).
+
+**Fő viselkedés:**
+
+- `PlayGame()`: Perzisztens játékos adat törlése (`PlayerHealthManager.ClearPersistedHealth()`) bug elkerüléséhez, majd játék indítása átmenettel.
+- `OpenHighScores()`, `CloseHighScores()`: Ranglista UI panel kezelése.
+- `UpdateLeaderboardDisplay()`: Ranglista betöltése JSON formátumból és legenerálása TextMeshPro felületre.
+
+## 9. Automata Tesztelés (Unit Tests)
 
 A projekt a Unity Test Framework (NUnit) segítségével átfogó automata tesztelést alkalmaz az üzleti logika és a játékelemek validálására. A tesztek az `Assets/Tests` mappában és a `Tests` Assembly definícióban találhatók.
 
 ### 8.1 `TestUtilities`
+
 - Segédosztály a tesztekhez, amely C# Reflection használatával teszi lehetővé a privát mezők (`GetPrivateField`, `SetPrivateField`) és privát metódusok (`InvokePrivateMethod`) hívását, valamint a statikus állapotok resetelését a tesztek között (pl. `ResetScore`, `ResetJumpKingSceneTransitionState`).
 
 ### 8.2 Tesztelt területek

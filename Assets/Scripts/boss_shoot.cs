@@ -129,6 +129,14 @@ public class BossSpawner : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
 
+        ScoreManager.AddBossKillScore();
+
+        if (BonusScoreManager.Instance != null)
+        {
+            ScoreManager.AddPoints(BonusScoreManager.Instance.GetBonusScore());
+            Destroy(BonusScoreManager.Instance.gameObject);
+        }
+
         if (MusicManager.instance != null)
         {
             MusicManager.instance.PlayMusicForScene("Outro");

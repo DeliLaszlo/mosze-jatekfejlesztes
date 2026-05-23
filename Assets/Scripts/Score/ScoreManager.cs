@@ -6,6 +6,7 @@ public static class ScoreManager
     public const int PatrollingEnemyKillPoints = 200;
     public const int MageEnemyKillPoints = 1000;
     public const int GoldUrnBreakPoints = 50;
+    public const int BossKillPoints = 5000;
 
     private static int currentScore;
 
@@ -30,6 +31,11 @@ public static class ScoreManager
     {
         currentScore = Mathf.Max(0, score);
         ScoreChanged?.Invoke(currentScore);
+    }
+
+    public static int GetScore()
+    {
+        return currentScore;
     }
 
     public static void AddPoints(int points)
@@ -64,5 +70,10 @@ public static class ScoreManager
     public static void AddGoldUrnScore()
     {
         AddPoints(GoldUrnBreakPoints);
+    }
+
+    public static void AddBossKillScore()
+    {
+        AddPoints(BossKillPoints);
     }
 }

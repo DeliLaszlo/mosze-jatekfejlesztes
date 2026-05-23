@@ -8,7 +8,8 @@ public class CutsceneManager : MonoBehaviour
     public float secondsPerImage = 3f;
     public float fadeDuration = 1f;
     public string nextScene = "level1";
-    
+    public bool stopAtLastImage = false;
+
     public GameObject spaceButtonUI;
 
     private int currentIndex = 0;
@@ -56,7 +57,7 @@ public class CutsceneManager : MonoBehaviour
         {
             StartCoroutine(CrossfadePanel(currentIndex, currentIndex + 1));
         }
-        else
+        else if (!stopAtLastImage)
         {
             MusicManager.instance.PlayMusicForScene(nextScene);
             SceneManager.LoadScene(nextScene);
@@ -99,6 +100,10 @@ public class CutsceneManager : MonoBehaviour
         isFading = false;
 
         if (timerCoroutine != null) StopCoroutine(timerCoroutine);
-        timerCoroutine = StartCoroutine(AutoSwitch());
+
+        if (!stopAtLastImage || currentIndex < panels.Length - 1)
+        {
+            timerCoroutine = StartCoroutine(AutoSwitch());
+        }
     }
 }

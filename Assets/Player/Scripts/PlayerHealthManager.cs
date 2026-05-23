@@ -52,6 +52,12 @@ public class PlayerHealthManager : MonoBehaviour
         persistedHealth = Mathf.Max(0, health);
     }
 
+    public static void ClearPersistedHealth()
+    {
+        hasPersistedHealth = false;
+        persistedHealth = 0;
+    }
+
     private void Awake()
     {
         animator = GetComponentInChildren<Animator>();

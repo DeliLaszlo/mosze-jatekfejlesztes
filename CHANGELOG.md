@@ -2,6 +2,22 @@
 
 A projekt fontosabb változásai itt kerülnek rögzítésre.
 
+## [2026-05-23]
+
+### Added
+
+- Game win screen hozzáadva a `CutsceneManager` `stopAtLastImage` opciójával az Outro jelenetben.
+- Boss legyőzés (5000 pont) és maradék idő bónusz pontok (BonusScoreManager) hozzáadva.
+- Főmenü bővítve Highscore (ranglista) felülettel és funkcióval, lokális `PlayerPrefs` mentéssel.
+
+### Changed
+
+- A `MainMenu` `PlayGame` metódusa törli a perzisztens játékos HP-t, javítva a játék újrakezdésekor fellépő bugot.
+
+### Fixed
+
+- `PlayerTests` unit tesztben a halál állapot (isInvincible és fizika coroutine) tesztelése javítva.
+
 ## [2026-05-10]
 
 ### Changed

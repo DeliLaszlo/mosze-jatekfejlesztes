@@ -1,6 +1,9 @@
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.TestTools;
+using System.Collections;
+using System.Reflection;
 using Object = UnityEngine.Object;
 
 public class PlayerHealthManagerTests
@@ -58,15 +61,25 @@ public class PlayerHealthManagerTests
         BoxCollider2D colliderA = player.AddComponent<BoxCollider2D>();
         CircleCollider2D colliderB = player.AddComponent<CircleCollider2D>();
         PlayerHealthManager health = player.AddComponent<PlayerHealthManager>();
+        
         TestUtilities.InvokePrivateMethod(health, "Awake");
+
+        FieldInfo invincibleField = typeof(PlayerHealthManager).GetField("isInvincible", BindingFlags.NonPublic | BindingFlags.Instance);
 
         for (int i = 0; i < health.MaxHealth; i++)
         {
             health.TakeDamage();
+            invincibleField.SetValue(health, false);
         }
 
         Assert.IsTrue(health.IsDead);
         Assert.IsFalse(controller.enabled);
+
+        MethodInfo routineMethod = typeof(PlayerHealthManager).GetMethod("HandleDeathPhysicsRoutine", BindingFlags.NonPublic | BindingFlags.Instance);
+        IEnumerator routine = (IEnumerator)routineMethod.Invoke(health, null);
+        
+        while (routine.MoveNext()) { }
+
         Assert.IsFalse(colliderA.enabled);
         Assert.IsFalse(colliderB.enabled);
         Assert.IsFalse(rb.simulated);
