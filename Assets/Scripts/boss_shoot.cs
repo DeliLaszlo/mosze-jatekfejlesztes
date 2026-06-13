@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class BossSpawner : MonoBehaviour
 {
-    public int hp = 12;
+    public int hp = 7;
     private int startHP; 
 
     [Header("Lövedék Beállítások")]
@@ -96,7 +96,10 @@ public class BossSpawner : MonoBehaviour
     {
         if (collision.CompareTag("Player") && !isInvulnerable)
         {
+            if(hp < 2) 
+            {
             TakeDamage(1);
+            }
         }
     }
     
