@@ -22,7 +22,7 @@ Ez a dokumentum a specifikációban ("specification.md") felsorolt követelmény
 
 | Eset (ID)                           | Leírás                             | Teljesülés    | Indoklás                                                                                                                           |
 | :---------------------------------- | :--------------------------------- | :------------ | :--------------------------------------------------------------------------------------------------------------------------------- |
-| **U1: Játék indítása**              | Játék elindítása a menüből         | **Teljesült** | A `TempMainMenu.unity` jelenetben a Play gomb betölti az Intro-t, a `MainMenu.PlayGame()` metóduson keresztül.                     |
+| **U1: Játék indítása**              | Játék elindítása a menüből         | **Teljesült** | A `MainMenu.unity` jelenetben a Play gomb betölti az Intro-t, a `MainMenu.PlayGame()` metóduson keresztül.                         |
 | **U2: Karakter mozgatás**           | Főkarakter mozgása                 | **Teljesült** | A játékos az A/D gombokkal irányíthatja a karakterét a beállított tengelyeken.                                                     |
 | **U3: Újraindítás**                 | Játékmenet újraindítása halál után | **Teljesült** | A halál után megjelenő `GameOver` képernyőn a Restart gombra kattintva, vagy az `R` gombbal (`ResetManager.cs`) a pálya újraindul. |
 | **U4: Kilépés a játékból**          | Kilépés                            | **Teljesült** | A főmenüben lévő Exit gomb meghívja az `Application.Quit()` függvényt.                                                             |

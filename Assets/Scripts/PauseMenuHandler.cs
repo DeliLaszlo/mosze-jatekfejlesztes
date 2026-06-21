@@ -7,7 +7,7 @@ public class PauseMenuHandler : MonoBehaviour
     public static bool GameIsPaused = false;
 
     [Header("UI References")]
-    [SerializeField] public string menuSceneName = "TempMainMenu"; 
+    [SerializeField] public string menuSceneName = "MainMenu"; 
     [SerializeField] private GameObject pauseMenuUI; 
     [SerializeField] private Slider masterSlider;
     [SerializeField] private Slider musicSlider;

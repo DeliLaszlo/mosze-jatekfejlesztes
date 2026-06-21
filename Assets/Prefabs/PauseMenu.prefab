@@ -2031,7 +2031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1056eabe555d181449dc2cfce823973e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MainAssembly::PauseMenuHandler
-  menuSceneName: TempMainMenu
+  menuSceneName: MainMenu
   pauseMenuUI: {fileID: 836878058276742715}
   masterSlider: {fileID: 6617645623596075830}
   musicSlider: {fileID: 6429888115138426307}

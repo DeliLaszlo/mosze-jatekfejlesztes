@@ -7,7 +7,7 @@ public class GameWinHandler : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI scoreDisplayText;
     [SerializeField] private TMP_InputField nameInputField;
-    [SerializeField] private string menuSceneName = "TempMainMenu";
+    [SerializeField] private string menuSceneName = "MainMenu";
 
     private void OnEnable()
     {

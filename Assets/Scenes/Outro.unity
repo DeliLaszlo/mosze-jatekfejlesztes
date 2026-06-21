@@ -2840,7 +2840,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: MainAssembly::GameWinHandler
   scoreDisplayText: {fileID: 1027278996}
   nameInputField: {fileID: 645711010}
-  menuSceneName: TempMainMenu
+  menuSceneName: MainMenu
 --- !u!224 &8435659107058752919
 RectTransform:
   m_ObjectHideFlags: 0

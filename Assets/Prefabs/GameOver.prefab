@@ -226,7 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6085bcb926c71d742aa85b714ba44423, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MainAssembly::GameOverHandler
-  menuSceneName: TempMainMenu
+  menuSceneName: MainMenu
   restartSceneName: EnemyLevel
 --- !u!1 &3189325704376793363
 GameObject:
