@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class BossSpawner : MonoBehaviour
 {
-    public int hp = 12;
-    private int startHP; 
+    public int hp = 7;
+    private int startHP;
 
     [Header("Lövedék Beállítások")]
     public GameObject bulletPrefab;
@@ -21,6 +21,7 @@ public class BossSpawner : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioSource fireballShootAudioPrefab;
 
+    public GameObject auraObject; 
     private AudioSource fireballShootAudioInstance;
     private GameObject playerTarget;
 
@@ -96,7 +97,10 @@ public class BossSpawner : MonoBehaviour
     {
         if (collision.CompareTag("Player") && !isInvulnerable)
         {
+            if(hp < 2) 
+            {
             TakeDamage(1);
+            }
         }
     }
     
@@ -106,6 +110,10 @@ public class BossSpawner : MonoBehaviour
 
         hp -= damage;
         Debug.Log("Boss HP: " + hp);
+        if (auraObject != null)
+        {
+            auraObject.SetActive(hp > 1);
+        }
 
         if (hp > 0)
         {
