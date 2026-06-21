@@ -24,10 +24,14 @@ A játék fantasy világban játszódik, ahol a torony minden szintje új kihív
 
 | Billentyű | Funkció       |
 | :-------- | :------------ |
-| A         | Balra mozgás  |
-| D         | Jobbra mozgás |
+| Bal nyíl  | Balra mozgás  |
+| Jobb nyíl | Jobbra mozgás |
 | Space     | Ugrás         |
 | Esc       | Szünet menü   |
+
+## Játék futtatása
+
+A játék a releases fülön található tömörített mapa letöltése és kicsomagolása után a mappában található Aetheria.exe fájlal indítható.
 
 ## Projekt futtatása
 
@@ -35,7 +39,6 @@ A játék fantasy világban játszódik, ahol a torony minden szintje új kihív
 - Unity Hub-ban: Add Project -> from disk -> a klónozott mappa kiválasztása
 - A projekt megnyitása után a Scenes mappában dupla kattintás a GameScene-re
 - Play gombbal futtatható a játék
-- Frissítéshez: git pull
 
 ### Rendszerarchitektúra
 
